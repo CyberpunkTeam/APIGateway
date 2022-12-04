@@ -38,5 +38,5 @@ class Services:
 
         auth_req = google.auth.transport.requests.Request()
         id_token = google.oauth2.id_token.fetch_id_token(auth_req, audience)
-
+        print(f"Authorization Bearer {id_token}")
         return {"Authorization": f"Bearer {id_token}"}
