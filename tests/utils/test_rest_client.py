@@ -12,7 +12,7 @@ def test_success_request():
         json = {"challenges": []}
         m.register_uri("GET", url, json=json, status_code=200)
 
-        json_response = RestClient.get(url)
+        json_response = RestClient.get(url, {})
 
         assert json_response == json
 
@@ -26,7 +26,7 @@ def test_status_500():
             json = {"message": "internal server error"}
             m.register_uri("GET", url, json=json, status_code=500)
 
-            RestClient.get(url)
+            RestClient.get(url, {})
 
 
 def test_status_400():
@@ -37,4 +37,4 @@ def test_status_400():
             json = {"message": "not found"}
             m.register_uri("GET", url, json=json, status_code=400)
 
-            RestClient.get(url)
+            RestClient.get(url, {})

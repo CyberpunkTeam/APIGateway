@@ -6,18 +6,18 @@ import requests
 
 class RestClient:
     @staticmethod
-    def get(url):
-        response = requests.get(url)
+    def get(url, headers):
+        response = requests.get(url, headers=headers)
         return RestClient.handle_response(response)
 
     @staticmethod
-    def post(url, json):
-        response = requests.post(url, json=json)
+    def post(url, headers, json):
+        response = requests.post(url, json=json, headers=headers)
         return RestClient.handle_response(response)
 
     @staticmethod
-    def patch(url, json):
-        response = requests.patch(url, json=json)
+    def put(url, headers, json):
+        response = requests.put(url, json=json, headers=headers)
         return RestClient.handle_response(response)
 
     @staticmethod

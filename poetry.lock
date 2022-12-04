@@ -30,6 +30,21 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "cloudpickle"]
 
 [[package]]
+name = "beautifulsoup4"
+version = "4.11.1"
+description = "Screen-scraping library"
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+
+[package.dependencies]
+soupsieve = ">1.2"
+
+[package.extras]
+html5lib = ["html5lib"]
+lxml = ["lxml"]
+
+[[package]]
 name = "certifi"
 version = "2022.9.24"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -158,6 +173,17 @@ python-versions = ">=3.7"
 [package.extras]
 docs = ["furo (>=2022.6.21)", "sphinx (>=5.1.1)", "sphinx-autodoc-typehints (>=1.19.1)"]
 testing = ["covdefaults (>=2.2)", "coverage (>=6.4.2)", "pytest (>=7.1.2)", "pytest-cov (>=3)", "pytest-timeout (>=2.1)"]
+
+[[package]]
+name = "google"
+version = "3.0.0"
+description = "Python bindings to the Google search engine."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+beautifulsoup4 = "*"
 
 [[package]]
 name = "h11"
@@ -410,6 +436,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "soupsieve"
+version = "2.3.2.post1"
+description = "A modern CSS selector implementation for Beautiful Soup."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "starlette"
 version = "0.21.0"
 description = "The little ASGI library that shines."
@@ -496,11 +530,12 @@ testing = ["coverage (>=6.2)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "e8a22dd835bb4dc8909c2712cf205ac048b2510e681c89b5fc407facb5df8540"
+content-hash = "1f3039b4ecc2a3bdbafd39ea6f2d3fb02e7cdc8b91292a150845be998dbc707d"
 
 [metadata.files]
 anyio = []
 attrs = []
+beautifulsoup4 = []
 certifi = []
 cfgv = []
 charset-normalizer = []
@@ -513,6 +548,7 @@ docopt = []
 exceptiongroup = []
 fastapi = []
 filelock = []
+google = []
 h11 = []
 httpcore = []
 httpx = []
@@ -533,6 +569,7 @@ requests-mock = []
 rfc3986 = []
 six = []
 sniffio = []
+soupsieve = []
 starlette = []
 toml = []
 tomli = []
