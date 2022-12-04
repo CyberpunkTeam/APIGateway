@@ -1,5 +1,5 @@
 # APIGateway
-[![.github/workflows/pipeline.yml](https://github.com/CyberpunkTeam/UserService/actions/workflows/pipeline.yml/badge.svg)](https://github.com/CyberpunkTeam/UserService/actions/workflows/pipeline.yml)
+[![.github/workflows/pipeline.yml](https://github.com/CyberpunkTeam/APIGateway/actions/workflows/pipeline.yml/badge.svg)](https://github.com/CyberpunkTeam/APIGateway/actions/workflows/pipeline.yml)
 
 
 
