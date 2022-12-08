@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from .routers import users, state
+from .routers import users, state, teams, profiles
 from fastapi.middleware.cors import CORSMiddleware
 
-
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,3 +14,5 @@ app.add_middleware(
 
 app.include_router(users.router)
 app.include_router(state.router)
+app.include_router(teams.router)
+app.include_router(profiles.router)
