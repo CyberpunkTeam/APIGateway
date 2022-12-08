@@ -7,17 +7,26 @@ import requests
 class RestClient:
     @staticmethod
     def get(url, headers):
-        response = requests.get(url, headers=headers)
+        if headers == {}:
+            response = requests.get(url)
+        else:
+            response = requests.get(url, headers=headers)
         return RestClient.handle_response(response)
 
     @staticmethod
     def post(url, headers, json):
-        response = requests.post(url, json=json, headers=headers)
+        if headers == {}:
+            response = requests.post(url, json=json)
+        else:
+            response = requests.post(url, json=json, headers=headers)
         return RestClient.handle_response(response)
 
     @staticmethod
     def put(url, headers, json):
-        response = requests.put(url, json=json, headers=headers)
+        if headers == {}:
+            response = requests.put(url, json=json)
+        else:
+            response = requests.put(url, json=json, headers=headers)
         return RestClient.handle_response(response)
 
     @staticmethod
