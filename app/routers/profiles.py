@@ -18,7 +18,7 @@ async def get_profile(user_id: str):
     try:
         url = config.TEAM_SERVICE_URL
         resource = "teams/"
-        params = {"owner_uid": user_id}
+        params = {"mid": user_id}
         team_data = Services.get(url, resource, params)
     except:
         team_data = {}
