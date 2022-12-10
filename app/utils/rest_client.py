@@ -7,13 +7,16 @@ import requests
 class RestClient:
     @staticmethod
     def get(url, headers):
-        print("entra el get")
-        if headers == {}:
-            response = requests.get(url)
-        else:
-            response = requests.get(url, headers=headers)
-        print("termina el get")
-        return RestClient.handle_response(response)
+        try:
+            print("entra el get")
+            if headers == {}:
+                response = requests.get(url)
+            else:
+                response = requests.get(url, headers=headers)
+            print("termina el get")
+            return RestClient.handle_response(response)
+        except Exception as e:
+            print(f"Error: {e}")
 
     @staticmethod
     def post(url, headers, json):
