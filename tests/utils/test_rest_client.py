@@ -10,7 +10,8 @@ def test_success_request():
 
     with requests_mock.Mocker() as m:
         json = {"challenges": []}
-        m.register_uri("GET", url, json=json, status_code=200)
+        headers = {"Content-Type": "application/json"}
+        m.register_uri("GET", url, json=json, status_code=200, headers=headers)
 
         json_response = RestClient.get(url, {})
 
@@ -24,7 +25,8 @@ def test_status_500():
 
         with requests_mock.Mocker() as m:
             json = {"message": "internal server error"}
-            m.register_uri("GET", url, json=json, status_code=500)
+            headers = {"Content-Type": "application/json"}
+            m.register_uri("GET", url, json=json, status_code=500, headers=headers)
 
             RestClient.get(url, {})
 
@@ -35,6 +37,7 @@ def test_status_400():
 
         with requests_mock.Mocker() as m:
             json = {"message": "not found"}
-            m.register_uri("GET", url, json=json, status_code=400)
+            headers = {"Content-Type": "application/json"}
+            m.register_uri("GET", url, json=json, status_code=400, headers=headers)
 
             RestClient.get(url, {})
