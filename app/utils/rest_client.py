@@ -33,7 +33,8 @@ class RestClient:
     def handle_response(response):
         try:
             status = response.status_code
-
+            print(f"Status code: {status}")
+            print(f"Text: {response.text}")
             if status >= 500:
                 raise HTTPException(status_code=status, detail="internal server error")
             elif status >= 400:
