@@ -11,3 +11,11 @@ async def list_users():
     resource = "users/"
     params = {}
     return Services.get(url, resource, params)
+
+
+@router.get("/tests/ping/", tags=["users"])
+async def list_users():
+    url = config.INTERNAL_USER_SERVICE_URL
+    resource = ""
+    params = {}
+    return Services.get(url, resource, params)
