@@ -34,14 +34,17 @@ class RestClient:
         try:
             status = response.status_code
             print(f"Status code: {status}")
+            print(f"Status code: {response.content}")
             print(f"Text: {response.text}")
             if status >= 500:
-                raise HTTPException(status_code=status, detail="internal server error")
+                raise HTTPException(status_code=status, detail="internal service error")
             elif status >= 400:
-                json = response.json()
-                message = json.get("message", "Not Found")
-                if "detail" in json:
-                    message = json.get("detail")
+                message = response.text
+                if "application/json" in response.headers.get("Content-Type", ""):
+                    json = response.json()
+                    message = json.get("message", "Not Found")
+                    if "detail" in json:
+                        message = json.get("detail")
                 raise HTTPException(status_code=status, detail=message)
             else:
                 json = response.json()
