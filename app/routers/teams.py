@@ -13,7 +13,7 @@ async def create_team(body: dict):
     return Services.post(url, resource, params, body)
 
 
-@router.get("/teams/:tid", tags=["teams"], status_code=200)
+@router.get("/teams/{tid}", tags=["teams"], status_code=200)
 async def get_team(tid: str):
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{tid}"
