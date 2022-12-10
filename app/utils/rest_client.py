@@ -7,6 +7,7 @@ import requests
 class RestClient:
     @staticmethod
     def get(url, headers):
+        print("entra el get")
         if headers == {}:
             response = requests.get(url)
         else:
