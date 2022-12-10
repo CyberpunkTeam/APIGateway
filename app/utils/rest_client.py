@@ -11,6 +11,7 @@ class RestClient:
             response = requests.get(url)
         else:
             response = requests.get(url, headers=headers)
+        print("termina el get")
         return RestClient.handle_response(response)
 
     @staticmethod
@@ -31,11 +32,12 @@ class RestClient:
 
     @staticmethod
     def handle_response(response):
+        print("entra al handle response")
         try:
-            status = response.status_code
-            print(f"Status code: {status}")
             print(f"Status code: {response.content}")
             print(f"Text: {response.text}")
+            status = response.status_code
+            print(f"Status code: {status}")
             if status >= 500:
                 raise HTTPException(status_code=status, detail="internal service error")
             elif status >= 400:
@@ -47,7 +49,10 @@ class RestClient:
                         message = json.get("detail")
                 raise HTTPException(status_code=status, detail=message)
             else:
-                json = response.json()
+                if "application/json" in response.headers.get("Content-Type", ""):
+                    json = response.json()
+                else:
+                    json = response.text
 
             return json
         except JSONDecodeError:
