@@ -18,7 +18,17 @@ async def get_team(tid: str):
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{tid}"
     params = {}
-    return Services.get(url, resource, params)
+    team = Services.get(url, resource, params)
+
+    members = team["members"]
+    query_param = "[" + ",".join(members) + "]"
+
+    url = config.USER_SERVICE_URL
+    resource = f"users/?uids={query_param}"
+    members_info = Services.get(url, resource, params)
+
+    team["members"] = members_info
+    return team
 
 
 @router.post("/teams/{tid}/members/{mid}", tags=["teams"], status_code=201)
