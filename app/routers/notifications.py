@@ -18,6 +18,7 @@ async def create_notification(body: TeamInvitation):
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
     params = {}
+    print(f"body_to send is {notification}")
     return Services.post(url, resource, params, notification)
 
 

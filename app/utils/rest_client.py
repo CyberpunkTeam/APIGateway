@@ -21,6 +21,7 @@ class RestClient:
 
     @staticmethod
     def post(url, headers, json):
+        print(f"body before request: {json }")
         if headers == {}:
             response = requests.post(url, json=json)
         else:
