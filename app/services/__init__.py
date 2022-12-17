@@ -1,9 +1,5 @@
-import os
-
 from app.utils.http_parser import HttpParser
 from app.utils.rest_client import RestClient
-import google.auth.transport.requests
-import google.oauth2.id_token
 
 
 class Services:

@@ -8,12 +8,23 @@ router = APIRouter()
 
 @router.post("/notifications/team_invitation/", tags=["notifications"], status_code=201)
 async def create_notification(body: TeamInvitation):
+    url = config.USER_SERVICE_URL
+    resource = f"users/{body.sender_id}"
+    params = {}
+    user = Services.get(url, resource, params)
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{body.tid}"
+    params = {}
+    team = Services.get(url, resource, params)
+
     notification = {
         "sender_id": body.sender_id,
         "receiver_id": body.receiver_id,
         "notification_type": "TEAM_INVITATION",
         "resource": "TEAM",
         "resource_id": body.tid,
+        "metadata": {"user": user, "team": team},
     }
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
