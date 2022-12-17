@@ -24,7 +24,7 @@ async def create_notification(body: TeamInvitation):
 
 @router.get("/notifications/", tags=["notifications"])
 async def list_notifications(receiver_id: str):
-    url = config.USER_SERVICE_URL
-    resource = "users/"
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
     params = {"receiver_id": receiver_id}
     return Services.get(url, resource, params)
