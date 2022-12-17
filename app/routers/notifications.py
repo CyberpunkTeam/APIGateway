@@ -6,7 +6,7 @@ from app.services import Services
 router = APIRouter()
 
 
-@router.post("/notifications/team_invitation/", tags=["users"], status_code=201)
+@router.post("/notifications/team_invitation/", tags=["notifications"], status_code=201)
 async def create_notification(body: TeamInvitation):
     notification = {
         "sender_id": body.sender_id,
@@ -18,10 +18,11 @@ async def create_notification(body: TeamInvitation):
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
     params = {}
+    print(f"body_to send is {notification}")
     return Services.post(url, resource, params, notification)
 
 
-@router.get("/notifications/", tags=["users"])
+@router.get("/notifications/", tags=["notifications"])
 async def list_notifications(receiver_id: str):
     url = config.USER_SERVICE_URL
     resource = "users/"
