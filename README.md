@@ -2,7 +2,6 @@
 [![.github/workflows/pipeline.yml](https://github.com/CyberpunkTeam/APIGateway/actions/workflows/pipeline.yml/badge.svg)](https://github.com/CyberpunkTeam/APIGateway/actions/workflows/pipeline.yml)
 
 
-
 ## Setup
 
 1. ```Install python ^3.9```
