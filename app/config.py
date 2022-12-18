@@ -6,3 +6,4 @@ TEAM_SERVICE_URL = os.environ.get("TEAM_SERVICE_URL", "http://test.com/")
 NOTIFICATION_SERVICE_URL = os.environ.get(
     "NOTIFICATION_SERVICE_URL", "http://test.com/"
 )
+PROJECT_SERVICE_URL = os.environ.get("PROJECT_SERVICE_URL", "http://test.com/")
