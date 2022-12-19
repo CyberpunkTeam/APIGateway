@@ -30,7 +30,7 @@ async def read_project(pid: str):
     resource = f"projects/{pid}"
     params = {}
     project = Services.get(url, resource, params)
-    add_creator(project)
+    project = add_creator(project)
     return project
 
 
@@ -42,5 +42,6 @@ def add_creator(project):
         creator = Services.get(url, resource, params)
         del project["creator_uid"]
         project["creator"] = creator
+        return project
     except:
-        pass
+        return project
