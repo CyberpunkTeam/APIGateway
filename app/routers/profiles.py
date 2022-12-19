@@ -1,5 +1,3 @@
-import asyncio
-
 from fastapi import APIRouter
 from app import config
 from app.services import Services
