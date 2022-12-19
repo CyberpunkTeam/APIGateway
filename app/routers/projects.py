@@ -30,7 +30,7 @@ async def read_project(pid: str):
     resource = f"projects/{pid}"
     params = {}
     project = Services.get(url, resource, params)
-
+    add_creator(project)
     return project
 
 
