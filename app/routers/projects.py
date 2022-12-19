@@ -20,7 +20,8 @@ async def list_projects(creator_uid: str = None):
     params = {}
     if creator_uid is not None:
         params["creator_uid"] = creator_uid
-    return Services.get(url, resource, params)
+    projects = Services.get(url, resource, params)
+    return list(map(add_creator, projects))
 
 
 @router.get("/projects/{pid}", tags=["projects"])
@@ -30,11 +31,16 @@ async def read_project(pid: str):
     params = {}
     project = Services.get(url, resource, params)
 
-    url = config.USER_SERVICE_URL
-    resource = f"users/{project.get('creator_uid')}"
-    params = {}
-    creator = Services.get(url, resource, params)
-    del project["creator_uid"]
-    project["creator"] = creator
-
     return project
+
+
+def add_creator(project):
+    try:
+        url = config.USER_SERVICE_URL
+        resource = f"users/{project.get('creator_uid')}"
+        params = {}
+        creator = Services.get(url, resource, params)
+        del project["creator_uid"]
+        project["creator"] = creator
+    except:
+        pass
