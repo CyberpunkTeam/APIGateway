@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import APIRouter
 from app import config
 from app.services import Services
@@ -22,4 +24,14 @@ async def get_profile(user_id: str):
         team_data = Services.get(url, resource, params)
     except:
         team_data = {}
-    return {"user": user_data, "teams": team_data}
+
+    try:
+        url = config.PROJECT_SERVICE_URL
+        resource = "projects/"
+        params = {"creator_uid": user_id}
+        projects = Services.get(url, resource, params)
+
+    except:
+        projects = {}
+
+    return {"user": user_data, "teams": team_data, "projects": projects}
