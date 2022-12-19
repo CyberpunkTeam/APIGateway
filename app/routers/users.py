@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app import config
+from app.models.requests.users.user_update import UserUpdate
 from app.services import Services
 
 router = APIRouter()
@@ -27,3 +28,11 @@ async def read_user(user_id: str):
     resource = f"users/{user_id}"
     params = {}
     return Services.get(url, resource, params)
+
+
+@router.put("/users/{user_id}", tags=["users"])
+async def put_user(user_id: str, user_update: UserUpdate):
+    url = config.USER_SERVICE_URL
+    resource = f"users/{user_id}"
+    params = {}
+    return Services.put(url, resource, params, user_update.to_json())

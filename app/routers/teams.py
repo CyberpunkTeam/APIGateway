@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app import config
+from app.models.requests.teams.team_update import TeamUpdate
 from app.services import Services
 
 router = APIRouter()
@@ -37,3 +38,11 @@ async def add_member(tid: str, mid: str):
     resource = f"teams/{tid}/members/{mid}"
     params = {}
     return Services.post(url, resource, params)
+
+
+@router.put("/teams/{tid}", tags=["teams"])
+async def put_user(tid: str, team_update: TeamUpdate):
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    return Services.put(url, resource, params, team_update.to_json())

@@ -28,4 +28,13 @@ async def read_project(pid: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
-    return Services.get(url, resource, params)
+    project = Services.get(url, resource, params)
+
+    url = config.USER_SERVICE_URL
+    resource = f"users/{project.get('creator_uid')}"
+    params = {}
+    creator = Services.get(url, resource, params)
+    del project["creator_uid"]
+    project["creator"] = creator
+
+    return project
