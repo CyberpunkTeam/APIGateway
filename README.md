@@ -1,6 +1,6 @@
 # APIGateway
 [![.github/workflows/pipeline.yml](https://github.com/CyberpunkTeam/APIGateway/actions/workflows/pipeline.yml/badge.svg)](https://github.com/CyberpunkTeam/APIGateway/actions/workflows/pipeline.yml)
-
+[![codecov](https://codecov.io/gh/CyberpunkTeam/APIGateway/branch/master/graph/badge.svg?token=4259NEDTAG)](https://codecov.io/gh/CyberpunkTeam/APIGateway)
 
 ## Setup
 
