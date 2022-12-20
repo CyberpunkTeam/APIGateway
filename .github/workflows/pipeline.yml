@@ -29,6 +29,16 @@ jobs:
         run: docker build -f Dockerfile.test . --rm  -t app-flask-test
       - name: Run tests
         run: docker run --rm app-flask-test
+  coverage:
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Coverage tests
+        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} sh coverage.sh
   deploy:
     if: github.ref == 'master'
     needs: tests
