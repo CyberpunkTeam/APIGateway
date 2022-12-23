@@ -1,6 +1,6 @@
 import asyncio
 from functools import partial
-
+from threading import Thread
 import aiohttp
 
 from app.utils.async_rest_client import AsyncRestClient
@@ -34,7 +34,7 @@ class Services:
         return RestClient.put(endpoint, headers, body)
 
     @staticmethod
-    def execute_many(requests_list):
+    def _execute_many(requests_list, result):
         async def execute_concurrent(requests_to_create):
             async with aiohttp.ClientSession() as session:
                 tasks = []
@@ -42,5 +42,20 @@ class Services:
                     tasks.append(asyncio.ensure_future(request(session)))
                 return await asyncio.gather(*tasks)
 
-        loop = asyncio.get_running_loop()
-        return loop.run_until_complete(execute_concurrent(requests_list))
+        result["result"] = asyncio.run(execute_concurrent(requests_list))
+
+    @staticmethod
+    def execute_many(
+        requests_list,
+    ):
+        result = {}
+        t = Thread(
+            target=Services._execute_many,
+            args=(
+                requests_list,
+                result,
+            ),
+        )
+        t.start()
+        t.join()
+        return result["result"]
