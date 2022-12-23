@@ -11,12 +11,14 @@ async def create_notification(body: TeamInvitation):
     url = config.USER_SERVICE_URL
     resource = f"users/{body.sender_id}"
     params = {}
-    user = Services.get(url, resource, params)
+    req_user = Services.get(url, resource, params, async_mode=True)
 
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{body.tid}"
     params = {}
-    team = Services.get(url, resource, params)
+    req_team = Services.get(url, resource, params, async_mode=True)
+
+    user, team = Services.execute_many([req_user, req_team])
 
     notification = {
         "sender_id": body.sender_id,
