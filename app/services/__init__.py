@@ -42,7 +42,5 @@ class Services:
                     tasks.append(asyncio.ensure_future(request(session)))
                 return await asyncio.gather(*tasks)
 
-        loop = asyncio.new_event_loop()
-        result = loop.run_until_complete(execute_concurrent(requests_list))
-        loop.close()
-        return result
+        loop = asyncio.get_running_loop()
+        return loop.run_until_complete(execute_concurrent(requests_list))
