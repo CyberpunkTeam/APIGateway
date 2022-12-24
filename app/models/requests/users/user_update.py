@@ -9,8 +9,6 @@ class UserUpdate(BaseModel):
     location: Optional[str] = ""
     profile_image: Optional[str] = ""
     cover_image: Optional[str] = ""
-    created_date: Optional[str]
-    updated_date: Optional[str]
 
     def to_json(self):
         return loads(self.json(exclude_defaults=True))
