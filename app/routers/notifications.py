@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app import config
+from app.models.requests.notifications.notification_update import NotificationUpdate
 from app.models.requests.notifications.team_invitation import TeamInvitation
 from app.services import Services
 
@@ -41,3 +42,11 @@ async def list_notifications(receiver_id: str):
     resource = "notifications/"
     params = {"receiver_id": receiver_id}
     return Services.get(url, resource, params)
+
+
+@router.put("/notifications/{nid}", tags=["notifications"])
+async def put_notifications(nid: str, notification: NotificationUpdate):
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/" + nid
+    params = {}
+    return Services.put(url, resource, params, notification)
