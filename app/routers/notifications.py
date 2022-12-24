@@ -49,4 +49,4 @@ async def put_notifications(nid: str, notification: NotificationUpdate):
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/" + nid
     params = {}
-    return Services.put(url, resource, params, notification)
+    return Services.put(url, resource, params, notification.to_json())
