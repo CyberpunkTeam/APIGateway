@@ -50,3 +50,11 @@ async def put_notifications(nid: str, notification: NotificationUpdate):
     resource = "notifications/" + nid
     params = {}
     return Services.put(url, resource, params, notification.to_json())
+
+
+@router.put("/notifications/viewed/", tags=["notifications"])
+async def put_notifications(nids: str):
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/viewed/"
+    params = {"nids": nids}
+    return Services.put(url, resource, params)
