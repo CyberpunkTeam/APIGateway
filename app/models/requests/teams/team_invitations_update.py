@@ -7,6 +7,7 @@ from pydantic import BaseModel
 class States(str, Enum):
     ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
+    PENDING = "PENDING"
 
 
 class TeamInvitationUpdate(BaseModel):
