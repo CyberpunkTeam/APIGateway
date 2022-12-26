@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("/invitations/teams/", tags=["invitations"], status_code=201)
 async def get_teams_invitations(
-    tid: str = None, postulant_uid: str = None, state: str = None
+    tid: str = None, postulant_uid: str = None, state: States = None
 ):
     url = config.TEAM_SERVICE_URL
     resource = f"/team_invitations/"
