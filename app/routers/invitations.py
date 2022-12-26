@@ -57,7 +57,7 @@ async def update_team_invitations(tiid: str, invitation: TeamInvitationUpdate):
     url = config.TEAM_SERVICE_URL
     resource = f"/team_invitations/{tiid}"
     params = {}
-    result = Services.put(url, resource, params, invitation.json())
+    result = Services.put(url, resource, params, invitation.to_json())
     if invitation.state == States.ACCEPTED:
         url = config.TEAM_SERVICE_URL
         resource = f"teams/{result.get('tid')}/members/{result.get('postulant_uid')}"
