@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import users, state, teams, profiles, notifications, projects
+from .routers import users, state, teams, profiles, notifications, projects, invitations
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -20,3 +20,4 @@ app.include_router(teams.router)
 app.include_router(profiles.router)
 app.include_router(notifications.router)
 app.include_router(projects.router)
+app.include_router(invitations.router)
