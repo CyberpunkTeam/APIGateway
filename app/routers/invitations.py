@@ -20,7 +20,18 @@ async def get_teams_invitations(
     if state is not None:
         params["state"] = state
 
-    if tid is not None:
+    if tid is not None and postulant_uid is not None:
+        params["postulant_uid"] = postulant_uid
+        params["tid"] = tid
+        invitations = Services.get(url, resource, params)
+        url = config.USER_SERVICE_URL
+        resource = f"users/{postulant_uid}"
+        params = {}
+        user = Services.get(url, resource, params)
+        for invitation in invitations:
+            invitation.get("metadata")["user"] = user
+
+    elif tid is not None:
         params["tid"] = tid
         invitations = Services.get(url, resource, params)
         reqs_get_users = []
