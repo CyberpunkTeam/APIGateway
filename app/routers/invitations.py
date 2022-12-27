@@ -9,7 +9,7 @@ from app.services import Services
 router = APIRouter()
 
 
-@router.get("/invitations/teams/", tags=["invitations"], status_code=201)
+@router.get("/invitations/teams/", tags=["invitations"])
 async def get_teams_invitations(
     tid: str = None, postulant_uid: str = None, state: States = None
 ):
