@@ -76,3 +76,11 @@ async def update_team_invitations(tiid: str, invitation: TeamInvitationUpdate):
         Services.post(url, resource, params)
 
     return result
+
+
+@router.get("/invitations/teams/{tiid}", tags=["invitations"])
+async def get_teams_invitations(tiid: str):
+    url = config.TEAM_SERVICE_URL
+    resource = f"/team_invitations/{tiid}"
+    params = {}
+    return Services.get(url, resource, params)
