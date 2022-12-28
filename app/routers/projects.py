@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app import config
+from app.models.requests.projects.project_update import ProjectsUpdate
 from app.services import Services
 
 router = APIRouter()
@@ -45,3 +46,11 @@ def add_creator(project):
         return project
     except:
         return project
+
+
+@router.put("/projects/{pid}", tags=["projects"])
+async def put_projects(pid: str, project_update: ProjectsUpdate):
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{pid}"
+    params = {}
+    return Services.put(url, resource, params, project_update.to_json())
