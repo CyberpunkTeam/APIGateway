@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from app import config
 from app.models.requests.projects.project_update import ProjectsUpdate
+from app.models.requests.projects.team_postulation import TeamPostulation
 from app.services import Services
 
 router = APIRouter()

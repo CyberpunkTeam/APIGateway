@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from app import config
 from app.models.requests.notifications.notification_update import NotificationUpdate
 from app.models.requests.notifications.team_invitation import TeamInvitation
+from app.models.requests.projects.team_postulation import TeamPostulation
 from app.services import Services
 
 router = APIRouter()
@@ -41,7 +42,7 @@ async def create_notification(body: TeamInvitation):
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
     params = {}
-    print(f"body_to send is {notification}")
+
     return Services.post(url, resource, params, notification)
 
 
@@ -67,3 +68,39 @@ async def put_notifications(nids: str):
     resource = "notifications/viewed/"
     params = {"nids": nids}
     return Services.put(url, resource, params)
+
+
+@router.post(
+    "/notifications/team_postulation/", tags=["notifications"], status_code=201
+)
+async def create_team_postulation_to_project(body: TeamPostulation):
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/postulations/"
+    params = {}
+    response = Services.post(url, resource, params, body.to_json())
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{body.tid}"
+    params = {}
+    req_team = Services.get(url, resource, params, async_mode=True)
+
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{body.pid}"
+    params = {}
+    req_project = Services.get(url, resource, params, async_mode=True)
+
+    team, project = Services.execute_many([req_team, req_project])
+
+    notification = {
+        "sender_id": body.tid,
+        "receiver_id": response.get("project_owner_uid"),
+        "notification_type": "TEAM_POSTULATION",
+        "resource": "TEAM_POSTULATIONS",
+        "resource_id": response.get("ppid"),
+        "metadata": {"project": project, "team": team},
+    }
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
