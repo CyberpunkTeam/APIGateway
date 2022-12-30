@@ -138,7 +138,7 @@ async def create_team_postulation_response(body: TeamPostulationResponse):
         "notification_type": "TEAM_POSTULATION_RESPONSE",
         "resource": "TEAM_POSTULATIONS",
         "resource_id": response.get("ppid"),
-        "metadata": {"response": TeamPostulationResponse.state, "project": project},
+        "metadata": {"response": body.state, "project": project},
     }
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
