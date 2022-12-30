@@ -55,3 +55,11 @@ async def put_projects(pid: str, project_update: ProjectsUpdate):
     resource = f"projects/{pid}"
     params = {}
     return Services.put(url, resource, params, project_update.to_json())
+
+
+@router.get("/projects/postulations/{ppid}", tags=["projects"], status_code=200)
+async def get_team_postulation_to_project(ppid: str):
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/postulations/{ppid}"
+    params = {}
+    return Services.get(url, resource, params)
