@@ -29,7 +29,6 @@ async def get_teams(owner: str = None):
         for team in teams:
             members = team["members"]
             query_param = "[" + ",".join(members) + "]"
-            print("query_param")
             url = config.USER_SERVICE_URL
             resource = "users/"
             params = {"uids": query_param}
