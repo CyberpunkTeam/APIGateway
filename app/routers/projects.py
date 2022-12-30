@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from app import config
 from app.models.requests.projects.project_update import ProjectsUpdate
-from app.models.requests.projects.team_postulation import TeamPostulation
 from app.models.requests.teams.team_invitations_update import States
 from app.services import Services
 
