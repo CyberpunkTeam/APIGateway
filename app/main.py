@@ -18,34 +18,10 @@ from .routers import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 
+from .routers.authentication import authenticate
 from .utils.authenticator import Authenticator
 
 app = FastAPI()
-
-API_KEY_NAME = "X-Tiger-Token"
-
-token_auth = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
-auth_repository = AuthenticationRepository(
-    os.environ.get("REDIS_PASSWORD"), int(os.environ.get("REDIS_TTL", 60))
-)
-
-
-async def authenticate(token_auth_input: str = Security(token_auth)):
-    if "Bearer" in token_auth_input:
-        token_auth_input = token_auth_input.replace("Bearer ", "")
-        if token_auth_input == "gonza" or token_auth_input == "mati":
-            return
-
-        if not Authenticator.authenticate(auth_repository, token_auth_input):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid Auth Token",
-            )
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid Auth Token",
-        )
 
 
 app.add_middleware(
