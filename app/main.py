@@ -26,7 +26,7 @@ API_KEY_NAME = "X-Tiger-Token"
 
 token_auth = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
 auth_repository = AuthenticationRepository(
-    os.environ.get("REDIS_PASSWORD"), int(os.environ.get("REDIS_TTL"), 60)
+    os.environ.get("REDIS_PASSWORD"), int(os.environ.get("REDIS_TTL", 60))
 )
 
 
