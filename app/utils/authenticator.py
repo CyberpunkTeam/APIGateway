@@ -50,6 +50,6 @@ class Authenticator:
         value = Authenticator.decode_token(token)
         created_date = datetime.strptime(value.get("created_date"), "%d-%m-%Y:%H:%M:%S")
         date = datetime.now()
-        date -= timedelta(days=int(os.environ.get("REDIS_TTL", 1)))
+        date -= timedelta(days=int(os.environ.get("TTL_DAYS", 1)))
 
         return created_date < date
