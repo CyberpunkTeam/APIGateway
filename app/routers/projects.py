@@ -94,6 +94,22 @@ async def get_team_postulations(pid: str = None, tid: str = None, state: States 
             req_team = Services.get(url, resource, params, async_mode=True)
             reqs_teams.append(req_team)
         teams = Services.execute_many(reqs_teams)
+
+        reqs_members = []
+        for team in teams:
+            url = config.USER_SERVICE_URL
+            members = team["members"]
+            query_param = "[" + ",".join(members) + "]"
+            resource = f"users/"
+            params = {"uids": query_param}
+            req_members = Services.get(url, resource, params, async_mode=True)
+            reqs_members.append(req_members)
+
+        members_info = Services.execute_many(reqs_members)
+
+        for j in range(len(teams)):
+            teams[j]["members"] = members_info[j]
+
         for i in range(len(postulations)):
             postulations[i]["team"] = teams[i]
 
