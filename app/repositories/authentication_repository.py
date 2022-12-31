@@ -3,6 +3,8 @@ import redis
 
 class AuthenticationRepository:
     def __init__(self, password, ttl):
+        print(f"password: {password}")
+        print(f"ttl: {ttl}")
         self.db = redis.Redis(
             host="redis-17318.c91.us-east-1-3.ec2.cloud.redislabs.com",
             port=17318,
