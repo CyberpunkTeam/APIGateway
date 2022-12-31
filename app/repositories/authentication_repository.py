@@ -6,8 +6,8 @@ class AuthenticationRepository:
         print(f"password: {password}")
         print(f"ttl: {ttl}")
         self.db = redis.Redis(
-            host="redis-17318.c91.us-east-1-3.ec2.cloud.redislabs.com",
-            port=17318,
+            host="redis-19325.c279.us-central1-1.gce.cloud.redislabs.com",
+            port=19325,
             password=password,
         )
         self.ttl = ttl  # seconds
