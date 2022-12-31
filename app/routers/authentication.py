@@ -1,14 +1,16 @@
+import os
+
 from fastapi import APIRouter, HTTPException
 from starlette import status
 
 from app.models.credentials import Credentials
 from app.models.token import Token
-from app.repositories.authentication_repository import AuthenticationRepository
 from app.utils.authenticator import Authenticator
 from app.utils.google_auth import GoogleAuth
+from app.main import auth_repository
 
 router = APIRouter()
-auth_repository = AuthenticationRepository("sKe8HhmQP2CnZRLgjy8hK7auj0YTTQ79", 3600)
+
 google_auth = GoogleAuth()
 
 
