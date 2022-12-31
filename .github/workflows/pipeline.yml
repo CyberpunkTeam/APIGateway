@@ -74,6 +74,10 @@ jobs:
     - name: Authorize Docker push
       run: gcloud auth configure-docker
 
+    - name: Get_file
+      run: |-
+          gsutil cp gs://web_configuration/credentials.json .
+
     - name: Build and Push Container
       run: |-
         docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }} .
