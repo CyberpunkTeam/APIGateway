@@ -58,9 +58,7 @@ async def put_projects(pid: str, project_update: ProjectsUpdate):
 
 
 @router.get("/projects/postulations/", tags=["projects"], status_code=200)
-async def get_team_postulation_to_project(
-    pid: str = None, tid: str = None, state: States = None
-):
+async def get_team_postulations(pid: str = None, tid: str = None, state: States = None):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/postulations/"
     params = {}
@@ -73,7 +71,33 @@ async def get_team_postulation_to_project(
     if state is not None:
         params["state"] = state
 
-    return Services.get(url, resource, params)
+    postulations = Services.get(url, resource, params)
+
+    if tid is not None:
+        reqs_projects = []
+        for postulation in postulations:
+            url = config.PROJECT_SERVICE_URL
+            resource = f"projects/{postulation.get('pid')}"
+            params = {}
+            req_project = Services.get(url, resource, params, async_mode=True)
+            reqs_projects.append(req_project)
+        projects = Services.execute_many(reqs_projects)
+        for i in range(len(postulations)):
+            postulations[i]["project"] = projects[i]
+
+    if pid is not None:
+        reqs_teams = []
+        for postulation in postulations:
+            url = config.TEAM_SERVICE_URL
+            resource = f"teams/{postulation.get('tid')}"
+            params = {}
+            req_team = Services.get(url, resource, params, async_mode=True)
+            reqs_teams.append(req_team)
+        teams = Services.execute_many(reqs_teams)
+        for i in range(len(postulations)):
+            postulations[i]["team"] = teams[i]
+
+    return postulations
 
 
 @router.get("/projects/postulations/{ppid}", tags=["projects"], status_code=200)
