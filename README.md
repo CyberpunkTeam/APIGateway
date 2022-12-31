@@ -12,7 +12,7 @@
 
 
 ### Pycharm:
-1. Add poetry plugin
+1. Add poetry plugin.
 2. Add an interpreter using poetry plugin
 
 
