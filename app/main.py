@@ -1,10 +1,5 @@
-import os
+from fastapi import FastAPI, Security
 
-from fastapi import FastAPI, Request, Security, HTTPException
-from fastapi.security import APIKeyHeader
-from starlette import status
-
-from .repositories.authentication_repository import AuthenticationRepository
 from .routers import (
     users,
     state,
@@ -19,7 +14,7 @@ from .routers import (
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers.authentication import authenticate
-from .utils.authenticator import Authenticator
+
 
 app = FastAPI()
 
