@@ -43,7 +43,7 @@ async def create_auth_token(credentials: Credentials):
         token = Authenticator.create_token(credentials.user_id)
         return Token(token=token)
     else:
-        HTTPException(
+        raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid Auth Google Token",
         )
