@@ -8,20 +8,12 @@ from jwt import DecodeError
 
 class Authenticator:
     @staticmethod
-    def authenticate(authentication_repository, token):
-        if Authenticator.is_expired(token):
-            token_decoded = Authenticator.decode_token(token)
-            new_token = Authenticator.create_token(token_decoded.get("user_id"))
-            if not authentication_repository.set(new_token):
-                raise HTTPException(status_code=500, detail="Error to refresh token")
-            else:
-                return True
-
-        valid_token = authentication_repository.get(token)
-        if valid_token is None:
-            return False
-        else:
+    def authenticate(token):
+        try:
+            Authenticator.decode_token(token)
             return True
+        except:
+            return False
 
     @staticmethod
     def create_token(user_id):
@@ -52,4 +44,4 @@ class Authenticator:
         date = datetime.now()
         date -= timedelta(days=int(os.environ.get("TTL_DAYS", 1)))
 
-        return created_date < date
+        return created_date > date

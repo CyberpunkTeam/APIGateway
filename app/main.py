@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Security
+from fastapi import FastAPI, Security, Request
 
 from .routers import (
     users,
@@ -14,9 +14,22 @@ from .routers import (
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers.authentication import authenticate
-
+from .utils.authenticator import Authenticator
 
 app = FastAPI()
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    response = await call_next(request)
+    auth_token = request.headers.get("X-Tiger-Token")
+    if auth_token is not None and "Bearer" in auth_token:
+        token = auth_token.replace("Bearer ", "")
+        if Authenticator.is_expired(token):
+            token_decoded = Authenticator.decode_token(token)
+            new_token = Authenticator.create_token(token_decoded.get("user_id"))
+            response.headers["Token-Refresh"] = new_token
+    return response
 
 
 app.add_middleware(
