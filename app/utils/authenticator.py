@@ -44,4 +44,4 @@ class Authenticator:
         date = datetime.now()
         date -= timedelta(days=int(os.environ.get("TTL_DAYS", 1)))
 
-        return created_date > date
+        return created_date < date
