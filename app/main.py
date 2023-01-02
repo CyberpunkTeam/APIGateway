@@ -25,7 +25,7 @@ async def add_process_time_header(request: Request, call_next):
     auth_token = request.headers.get("X-Tiger-Token")
     if auth_token is not None and "Bearer" in auth_token:
         token = auth_token.replace("Bearer ", "")
-        if Authenticator.is_expired(token):
+        if Authenticator.is_expired(token) and not (token in ("gonza", "mati")):
             token_decoded = Authenticator.decode_token(token)
             new_token = Authenticator.create_token(token_decoded.get("user_id"))
             response.headers["Token-Refresh"] = new_token
