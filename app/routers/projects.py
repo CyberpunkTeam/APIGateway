@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app import config
+from app.models.project_states import ProjectStates
 from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_invitations_update import States
 from app.services import Services
@@ -16,12 +17,16 @@ async def create_project(body: dict):
 
 
 @router.get("/projects/", tags=["projects"])
-async def list_projects(creator_uid: str = None):
+async def list_projects(creator_uid: str = None, state: ProjectStates = None):
     url = config.PROJECT_SERVICE_URL
     resource = "projects/"
     params = {}
     if creator_uid is not None:
         params["creator_uid"] = creator_uid
+
+    if state is not None:
+        params["state"] = state
+
     projects = Services.get(url, resource, params)
     return list(map(add_creator, projects))
 
