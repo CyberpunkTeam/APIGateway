@@ -155,7 +155,7 @@ async def list_project_abandonment(tid: str = None, pid: str = None):
 
 
 @router.get("/project_abandonment/{pa_id}", tags=["projects"], status_code=200)
-async def list_project_abandonment(pa_id: str):
+async def get_project_abandonment(pa_id: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"project_abandonment/{pa_id}"
     params = {}
@@ -186,7 +186,7 @@ async def list_project_abandons_requests(tid: str = None, pid: str = None):
 
 
 @router.get("/project_abandons_requests/{par_id}", tags=["projects"], status_code=200)
-async def list_project_abandons_requests(par_id: str):
+async def get_project_abandons_requests(par_id: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"project_abandons_requests/{par_id}"
     params = {}
