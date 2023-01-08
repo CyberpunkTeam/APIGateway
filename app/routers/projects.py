@@ -1,6 +1,10 @@
 from fastapi import APIRouter
 from app import config
 from app.models.project_states import ProjectStates
+from app.models.requests.projects.project_abandonment import ProjectAbandonment
+from app.models.requests.projects.project_abandons_request import (
+    ProjectAbandonsRequests,
+)
 from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_invitations_update import States
 from app.services import Services
@@ -125,5 +129,65 @@ async def get_team_postulations(pid: str = None, tid: str = None, state: States 
 async def get_team_postulation_to_project(ppid: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/postulations/{ppid}"
+    params = {}
+    return Services.get(url, resource, params)
+
+
+@router.post("/project_abandonment/", tags=["projects"], status_code=201)
+async def create_project_abandonment(project_abandonment: ProjectAbandonment):
+    url = config.PROJECT_SERVICE_URL
+    resource = "project_abandonment/"
+    params = {}
+    return Services.post(url, resource, params, project_abandonment.to_json())
+
+
+@router.get("/project_abandonment/", tags=["projects"], status_code=200)
+async def list_project_abandonment(tid: str = None, pid: str = None):
+    url = config.PROJECT_SERVICE_URL
+    resource = "project_abandonment/"
+    params = {}
+    if tid is not None:
+        params["tid"] = tid
+    if pid is not None:
+        params["pid"] = pid
+
+    return Services.get(url, resource, params)
+
+
+@router.get("/project_abandonment/{pa_id}", tags=["projects"], status_code=200)
+async def list_project_abandonment(pa_id: str):
+    url = config.PROJECT_SERVICE_URL
+    resource = f"project_abandonment/{pa_id}"
+    params = {}
+    return Services.get(url, resource, params)
+
+
+@router.post("/project_abandons_requests/", tags=["projects"], status_code=201)
+async def create_project_abandons_requests(
+    project_abandons_requests: ProjectAbandonsRequests,
+):
+    url = config.PROJECT_SERVICE_URL
+    resource = "project_abandons_requests/"
+    params = {}
+    return Services.post(url, resource, params, project_abandons_requests.to_json())
+
+
+@router.get("/project_abandons_requests/", tags=["projects"], status_code=200)
+async def list_project_abandons_requests(tid: str = None, pid: str = None):
+    url = config.PROJECT_SERVICE_URL
+    resource = "project_abandons_requests/"
+    params = {}
+    if tid is not None:
+        params["tid"] = tid
+    if pid is not None:
+        params["pid"] = pid
+
+    return Services.get(url, resource, params)
+
+
+@router.get("/project_abandons_requests/{par_id}", tags=["projects"], status_code=200)
+async def list_project_abandons_requests(par_id: str):
+    url = config.PROJECT_SERVICE_URL
+    resource = f"project_abandons_requests/{par_id}"
     params = {}
     return Services.get(url, resource, params)
