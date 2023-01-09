@@ -1,7 +1,14 @@
 from fastapi import APIRouter
 from app import config
+from app.models.project_states import ProjectStates
 from app.models.requests.notifications.notification_update import NotificationUpdate
 from app.models.requests.notifications.team_invitation import TeamInvitation
+from app.models.requests.projects.project_abandonment import ProjectAbandonment
+from app.models.requests.projects.project_abandons_request import (
+    ProjectAbandonsRequests,
+)
+from app.models.requests.projects.project_requests import ProjectRequests
+from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.projects.team_postulation import TeamPostulation
 from app.models.requests.projects.team_postulation_response import (
     TeamPostulationResponse,
@@ -139,6 +146,160 @@ async def create_team_postulation_response(body: TeamPostulationResponse):
         "resource": "TEAM_POSTULATIONS",
         "resource_id": response.get("ppid"),
         "metadata": {"response": body.state, "project": project},
+    }
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
+
+
+@router.post(
+    "/notifications/project_finished/", tags=["notifications"], status_code=201
+)
+def create_project_finished_notification(requests: ProjectRequests):
+    pid = requests.pid
+    tid = requests.tid
+
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{pid}"
+    project_update = ProjectsUpdate(state=ProjectStates.FINISHED)
+    params = {}
+    project = Services.put(url, resource, params, project_update.to_json())
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    team = Services.get(url, resource, params)
+
+    notification = {
+        "sender_id": team.get("tid"),
+        "receiver_id": project.get("creator_uid"),
+        "notification_type": "PROJECT_FINISHED",
+        "resource": "PROJECT",
+        "resource_id": project.get("pid"),
+        "metadata": {"project": project},
+    }
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
+
+
+@router.post(
+    "/notifications/project_finished_requests/", tags=["notifications"], status_code=201
+)
+async def create_project_finished_request_notification(requests: ProjectRequests):
+    body = {"pid": requests.pid, "tid": requests.tid}
+
+    url = config.PROJECT_SERVICE_URL
+    resource = "/project_finished_requests/"
+    params = {}
+    result = Services.post(url, resource, params, body)
+
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{requests.pid}"
+    params = {}
+    project = Services.get(url, resource, params)
+
+    tid = project.get("tid_assigned")
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    team = Services.get(url, resource, params)
+
+    notification = {
+        "sender_id": project.get("creator_uid"),
+        "receiver_id": team.get("owner"),
+        "notification_type": "PROJECT_FINISHED_REQUEST",
+        "resource": "PROJECT_FINISHED_REQUESTS",
+        "resource_id": result.get("pfr_id"),
+        "metadata": {"project": project},
+    }
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
+
+
+@router.post(
+    "/notifications/project_abandonment/", tags=["notifications"], status_code=201
+)
+def create_abandoned_project_notification(project_abandonment: ProjectAbandonment):
+    url = config.PROJECT_SERVICE_URL
+    resource = "project_abandonment/"
+    params = {}
+    project_abandonment_result = Services.post(
+        url, resource, params, project_abandonment.to_json()
+    )
+
+    pid = project_abandonment_result.get("pid")
+    tid = project_abandonment_result.get("tid")
+
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{pid}"
+    params = {}
+    req_project = Services.get(url, resource, params, async_mode=True)
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    req_team = Services.get(url, resource, params, async_mode=True)
+
+    project, team = Services.execute_many([req_project, req_team])
+
+    notification = {
+        "sender_id": team.get("tid"),
+        "receiver_id": project.get("creator_uid"),
+        "notification_type": "ABANDONED_PROJECT",
+        "resource": "PROJECT_ABANDONMENT",
+        "resource_id": project_abandonment_result.get("pa_id"),
+        "metadata": {"project": project, "team": team},
+    }
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
+
+
+@router.post(
+    "/notifications/project_abandons_requests/", tags=["notifications"], status_code=201
+)
+def create_project_abandons_request_notification(
+    project_abandons_requests: ProjectAbandonsRequests,
+):
+    url = config.PROJECT_SERVICE_URL
+    resource = "project_abandons_requests/"
+    params = {}
+    project_abandons_requests_result = Services.post(
+        url, resource, params, project_abandons_requests.to_json()
+    )
+
+    pid = project_abandons_requests_result.get("pid")
+    tid = project_abandons_requests_result.get("tid")
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{pid}"
+    params = {}
+    req_project = Services.get(url, resource, params, async_mode=True)
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    req_team = Services.get(url, resource, params, async_mode=True)
+
+    project, team = Services.execute_many([req_project, req_team])
+
+    notification = {
+        "sender_id": project.get("creator_uid"),
+        "receiver_id": team.get("owner"),
+        "notification_type": "ABANDONED_PROJECT_REQUEST",
+        "resource": "PROJECT_ABANDONS_REQUEST",
+        "resource_id": project_abandons_requests_result.get("par_id"),
+        "metadata": {"project": project, "team": team},
     }
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
