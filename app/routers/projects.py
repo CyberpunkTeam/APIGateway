@@ -7,6 +7,11 @@ from app.models.requests.projects.project_abandons_request import (
 )
 from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_invitations_update import States
+from app.routers.notifications import (
+    create_project_abandons_request_notification,
+    create_abandoned_project_notification,
+    create_project_finished_request_notification,
+)
 from app.services import Services
 
 router = APIRouter()
@@ -133,14 +138,6 @@ async def get_team_postulation_to_project(ppid: str):
     return Services.get(url, resource, params)
 
 
-@router.post("/project_abandonment/", tags=["projects"], status_code=201)
-async def create_project_abandonment(project_abandonment: ProjectAbandonment):
-    url = config.PROJECT_SERVICE_URL
-    resource = "project_abandonment/"
-    params = {}
-    return Services.post(url, resource, params, project_abandonment.to_json())
-
-
 @router.get("/project_abandonment/", tags=["projects"], status_code=200)
 async def list_project_abandonment(tid: str = None, pid: str = None):
     url = config.PROJECT_SERVICE_URL
@@ -160,16 +157,6 @@ async def get_project_abandonment(pa_id: str):
     resource = f"project_abandonment/{pa_id}"
     params = {}
     return Services.get(url, resource, params)
-
-
-@router.post("/project_abandons_requests/", tags=["projects"], status_code=201)
-async def create_project_abandons_requests(
-    project_abandons_requests: ProjectAbandonsRequests,
-):
-    url = config.PROJECT_SERVICE_URL
-    resource = "project_abandons_requests/"
-    params = {}
-    return Services.post(url, resource, params, project_abandons_requests.to_json())
 
 
 @router.get("/project_abandons_requests/", tags=["projects"], status_code=200)

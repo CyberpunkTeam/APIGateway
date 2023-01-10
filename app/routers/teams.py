@@ -65,7 +65,35 @@ async def add_member(tid: str, mid: str):
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{tid}/members/{mid}"
     params = {}
-    return Services.post(url, resource, params)
+    new_members = Services.post(url, resource, params)
+
+    url = config.USER_SERVICE_URL
+    resource = f"users/{mid}"
+    params = {}
+    req_user = Services.get(url, resource, params, async_mode=True)
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    req_team = Services.get(url, resource, params, async_mode=True)
+
+    user, team = Services.execute_many([req_user, req_team])
+
+    notification = {
+        "sender_id": mid,
+        "receiver_id": team.get("owner"),
+        "notification_type": "NEW_TEAM_MEMBERS",
+        "resource": "USERS",
+        "resource_id": mid,
+        "metadata": {"user": user, "team": team},
+    }
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return new_members
 
 
 @router.put("/teams/{tid}", tags=["teams"])
