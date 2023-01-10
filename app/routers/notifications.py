@@ -203,7 +203,7 @@ async def create_project_finished_request_notification(requests: ProjectRequests
     params = {}
     project = Services.get(url, resource, params)
 
-    tid = project.get("tid_assigned")
+    tid = project.get("team_assigned")
 
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{tid}"
