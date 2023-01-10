@@ -176,7 +176,7 @@ def create_project_finished_notification(requests: ProjectRequests):
         "sender_id": team.get("tid"),
         "receiver_id": project.get("creator_uid"),
         "notification_type": "PROJECT_FINISHED",
-        "resource": "PROJECT",
+        "resource": "PROJECTS",
         "resource_id": project.get("pid"),
         "metadata": {"project": project},
     }

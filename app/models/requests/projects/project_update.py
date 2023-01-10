@@ -14,6 +14,7 @@ class ProjectsUpdate(BaseModel):
     technologies: Optional[List[str]] = None
     updated_date: Optional[str] = ""
     state: Optional[ProjectStates] = None
+    team_assigned: Optional[str] = None
 
     def to_json(self):
         return loads(self.json(exclude_defaults=True))

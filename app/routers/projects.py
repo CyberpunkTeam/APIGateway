@@ -178,3 +178,28 @@ async def get_project_abandons_requests(par_id: str):
     resource = f"project_abandons_requests/{par_id}"
     params = {}
     return Services.get(url, resource, params)
+
+
+@router.put("/projects/{pid}/team_assigned/{tid}")
+async def add_project_team_assigned(pid: str, tid: str):
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    team = Services.get(url, resource, params)
+
+    notification = {
+        "sender_id": project.get("creator_uid"),
+        "receiver_id": team.get("owner"),
+        "notification_type": "TEAM_ASSIGNED",
+        "resource": "PROJECTS",
+        "resource_id": pid,
+        "metadata": {"project": project, "team": team},
+    }
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return project
