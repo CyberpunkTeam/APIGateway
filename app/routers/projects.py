@@ -1,17 +1,8 @@
 from fastapi import APIRouter
 from app import config
 from app.models.project_states import ProjectStates
-from app.models.requests.projects.project_abandonment import ProjectAbandonment
-from app.models.requests.projects.project_abandons_request import (
-    ProjectAbandonsRequests,
-)
 from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_invitations_update import States
-from app.routers.notifications import (
-    create_project_abandons_request_notification,
-    create_abandoned_project_notification,
-    create_project_finished_request_notification,
-)
 from app.services import Services
 
 router = APIRouter()
@@ -46,8 +37,24 @@ async def read_project(pid: str):
     resource = f"projects/{pid}"
     params = {}
     project = Services.get(url, resource, params)
+    project = add_team(project)
     project = add_creator(project)
     return project
+
+
+def add_team(project):
+    if project.get("team_assigned") is None:
+        return project
+    try:
+        tid = project.get("team_assigned")
+        url = config.TEAM_SERVICE_URL
+        resource = f"teams/{tid}"
+        params = {}
+        team = Services.get(url, resource, params)
+        project["team_assigned"] = team
+        return project
+    except:
+        return project
 
 
 def add_creator(project):
@@ -177,4 +184,24 @@ async def get_project_abandons_requests(par_id: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"project_abandons_requests/{par_id}"
     params = {}
+    return Services.get(url, resource, params)
+
+
+@router.post("/projects_reviews/", tags=["projects"], status_code=201)
+async def create_project_review(body: dict):
+    url = config.PROJECT_SERVICE_URL
+    resource = "projects_reviews/"
+    params = {}
+    return Services.post(url, resource, params, body)
+
+
+@router.get("/projects_reviews/", tags=["projects"], status_code=200)
+async def get_project_review(pid: str = None, tid: str = None):
+    url = config.PROJECT_SERVICE_URL
+    resource = "projects_reviews/"
+    params = {}
+    if pid is not None:
+        params["pid"] = pid
+    if tid is not None:
+        params["tid"] = tid
     return Services.get(url, resource, params)
