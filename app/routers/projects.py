@@ -187,6 +187,27 @@ async def get_project_abandons_requests(par_id: str):
     return Services.get(url, resource, params)
 
 
+@router.get("/project_finished_requests/", tags=["projects"], status_code=200)
+async def list_project_finished_requests(tid: str = None, pid: str = None):
+    url = config.PROJECT_SERVICE_URL
+    resource = "project_finished_requests/"
+    params = {}
+    if tid is not None:
+        params["tid"] = tid
+    if pid is not None:
+        params["pid"] = pid
+
+    return Services.get(url, resource, params)
+
+
+@router.get("/project_finished_requests/{pfr_id}", tags=["projects"], status_code=200)
+async def get_project_finished_requests(pfr_id: str):
+    url = config.PROJECT_SERVICE_URL
+    resource = f"project_finished_requests/{pfr_id}"
+    params = {}
+    return Services.get(url, resource, params)
+
+
 @router.post("/projects_reviews/", tags=["projects"], status_code=201)
 async def create_project_review(body: dict):
     url = config.PROJECT_SERVICE_URL
