@@ -106,7 +106,7 @@ async def put_user(tid: str, team_update: TeamUpdate):
 
 @router.post("/teams_reviews/", tags=["teams"], status_code=201)
 async def create_team_review(body: dict):
-    url = config.PROJECT_SERVICE_URL
+    url = config.TEAM_SERVICE_URL
     resource = "teams_reviews/"
     params = {}
     return Services.post(url, resource, params, body)
@@ -114,7 +114,7 @@ async def create_team_review(body: dict):
 
 @router.get("/teams_reviews/", tags=["teams"], status_code=200)
 async def get_team_review(pid: str = None, tid: str = None):
-    url = config.PROJECT_SERVICE_URL
+    url = config.TEAM_SERVICE_URL
     resource = "teams_reviews/"
     params = {}
     if pid is not None:
@@ -126,7 +126,7 @@ async def get_team_review(pid: str = None, tid: str = None):
 
 @router.post("/team_members_reviews/", tags=["teams"], status_code=201)
 async def create_team_member_review(body: dict):
-    url = config.PROJECT_SERVICE_URL
+    url = config.TEAM_SERVICE_URL
     resource = "team_members_reviews/"
     params = {}
     return Services.post(url, resource, params, body)
@@ -139,7 +139,7 @@ async def get_team_member_review(
     member_reviewer: str = None,
     member_reviewed: str = None,
 ):
-    url = config.PROJECT_SERVICE_URL
+    url = config.TEAM_SERVICE_URL
     resource = "team_members_reviews/"
     params = {}
     if pid is not None:
