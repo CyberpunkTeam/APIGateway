@@ -172,45 +172,31 @@ async def create_project_finished_notification(requests: ProjectRequests):
         resource = f"projects/{pid}"
         project_update = ProjectsUpdate(state=ProjectStates.FINISHED)
         params = {}
-        project = Services.put(url, resource, params, project_update.to_json())
-
-        notification = {
-            "sender_id": team.get("tid"),
-            "receiver_id": project.get("creator_uid"),
-            "notification_type": "PROJECT_FINISHED",
-            "resource": "PROJECTS",
-            "resource_id": project.get("pid"),
-            "metadata": {"project": project, "response": requests.state},
-        }
-        url = config.NOTIFICATION_SERVICE_URL
-        resource = "notifications/"
-        params = {}
-
-        Services.post(url, resource, params, notification)
-    else:
-        url = config.PROJECT_SERVICE_URL
-        resource = f"projects/{pid}"
-        params = {}
-        project = Services.get(url, resource, params)
-        notification = {
-            "sender_id": team.get("tid"),
-            "receiver_id": project.get("creator_uid"),
-            "notification_type": "PROJECT_FINISHED",
-            "resource": "PROJECTS",
-            "resource_id": project.get("pid"),
-            "metadata": {"project": project, "response": requests.state},
-        }
-        url = config.NOTIFICATION_SERVICE_URL
-        resource = "notifications/"
-        params = {}
-
-        Services.post(url, resource, params, notification)
+        Services.put(url, resource, params, project_update.to_json())
 
     url = config.PROJECT_SERVICE_URL
     resource = f"/project_finished_requests/{requests.request_id}"
     params = {}
     body = {"state": requests.state}
-    return Services.put(url, resource, params, body)
+    Services.put(url, resource, params, body)
+
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{pid}"
+    params = {}
+    project = Services.get(url, resource, params)
+    notification = {
+        "sender_id": team.get("tid"),
+        "receiver_id": project.get("creator_uid"),
+        "notification_type": "PROJECT_FINISHED",
+        "resource": "PROJECTS",
+        "resource_id": project.get("pid"),
+        "metadata": {"project": project, "response": requests.state},
+    }
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
 
 
 @router.post(
@@ -303,6 +289,7 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
             "project": project,
             "team": team,
             "response": project_abandonment.state,
+            "request_id": project_abandonment.request_id,
         },
     }
     url = config.NOTIFICATION_SERVICE_URL
