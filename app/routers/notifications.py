@@ -289,6 +289,7 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
             "project": project,
             "team": team,
             "response": project_abandonment.state,
+            "request_id": project_abandonment.request_id,
         },
     }
     url = config.NOTIFICATION_SERVICE_URL

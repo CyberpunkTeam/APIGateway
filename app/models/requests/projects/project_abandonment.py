@@ -10,7 +10,7 @@ class ProjectAbandonment(BaseModel):
     pid: str
     tid: str
     reasons: List[str]
-    request_id: Optional[str]
+    request_id: Optional[str] = None
     state: RequestStates
 
     def to_json(self):
