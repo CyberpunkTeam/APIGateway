@@ -102,3 +102,52 @@ async def put_user(tid: str, team_update: TeamUpdate):
     resource = f"teams/{tid}"
     params = {}
     return Services.put(url, resource, params, team_update.to_json())
+
+
+@router.post("/teams_reviews/", tags=["teams"], status_code=201)
+async def create_team_review(body: dict):
+    url = config.PROJECT_SERVICE_URL
+    resource = "projects_reviews/"
+    params = {}
+    return Services.post(url, resource, params, body)
+
+
+@router.get("/teams_reviews/", tags=["teams"], status_code=200)
+async def get_team_review(pid: str = None, tid: str = None):
+    url = config.PROJECT_SERVICE_URL
+    resource = "projects_reviews/"
+    params = {}
+    if pid is not None:
+        params["pid"] = pid
+    if tid is not None:
+        params["tid"] = tid
+    return Services.get(url, resource, params)
+
+
+@router.post("/team_members_reviews/", tags=["teams"], status_code=201)
+async def create_team_member_review(body: dict):
+    url = config.PROJECT_SERVICE_URL
+    resource = "projects_reviews/"
+    params = {}
+    return Services.post(url, resource, params, body)
+
+
+@router.get("/team_members_reviews/", tags=["teams"], status_code=200)
+async def get_team_member_review(
+    pid: str = None,
+    tid: str = None,
+    member_reviewer: str = None,
+    member_reviewed: str = None,
+):
+    url = config.PROJECT_SERVICE_URL
+    resource = "projects_reviews/"
+    params = {}
+    if pid is not None:
+        params["pid"] = pid
+    if tid is not None:
+        params["tid"] = tid
+    if member_reviewer is not None:
+        params["member_reviewer"] = member_reviewer
+    if member_reviewed is not None:
+        params["member_reviewed"] = member_reviewed
+    return Services.get(url, resource, params)
