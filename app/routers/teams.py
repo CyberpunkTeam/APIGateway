@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 from app import config
+from app.models.project_states import ProjectStates
+from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_update import TeamUpdate
 from app.services import Services
 
@@ -106,6 +108,13 @@ async def put_user(tid: str, team_update: TeamUpdate):
 
 @router.post("/teams_reviews/", tags=["teams"], status_code=201)
 async def create_team_review(body: dict):
+
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{body.get('pid')}"
+    project_update = ProjectsUpdate(state=ProjectStates.FINISHED)
+    params = {}
+    Services.put(url, resource, params, project_update.to_json())
+
     url = config.TEAM_SERVICE_URL
     resource = "teams_reviews/"
     params = {}
