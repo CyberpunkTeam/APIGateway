@@ -167,13 +167,6 @@ async def create_project_finished_notification(requests: ProjectRequests):
     params = {}
     team = Services.get(url, resource, params)
 
-    if requests.state == RequestStates.ACCEPTED:
-        url = config.PROJECT_SERVICE_URL
-        resource = f"projects/{pid}"
-        project_update = ProjectsUpdate(state=ProjectStates.FINISHED)
-        params = {}
-        Services.put(url, resource, params, project_update.to_json())
-
     url = config.PROJECT_SERVICE_URL
     resource = f"/project_finished_requests/{requests.request_id}"
     params = {}
