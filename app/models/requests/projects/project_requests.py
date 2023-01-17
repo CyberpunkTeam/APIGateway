@@ -8,5 +8,5 @@ from app.models.requests.projects.request_states import RequestStates
 class ProjectRequests(BaseModel):
     pid: str
     tid: str
-    state: RequestStates
+    state: Optional[RequestStates]
     request_id: Optional[str] = None
