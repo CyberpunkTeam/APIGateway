@@ -72,8 +72,8 @@ async def get_team(tid: str):
         amount_ratings += 1
         total_ratings += review.get("rating", 0)
 
-    team["overall_rating"] = (
-        float(total_ratings) / amount_ratings if amount_ratings > 0 else 0
+    team["overall_rating"] = round(
+        float(total_ratings) / amount_ratings if amount_ratings > 0 else 0, 1
     )
     team["reviews"] = reviews
     team["members"] = members_info
@@ -126,7 +126,6 @@ async def put_user(tid: str, team_update: TeamUpdate):
 
 @router.post("/teams_reviews/", tags=["teams"], status_code=201)
 async def create_team_review(body: dict):
-
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{body.get('pid')}"
     project_update = ProjectsUpdate(state=ProjectStates.FINISHED)
