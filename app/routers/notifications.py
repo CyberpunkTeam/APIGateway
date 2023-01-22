@@ -338,24 +338,31 @@ def create_project_abandons_request_notification(
 
 
 def send_team_review_notification(team, project):
-    notifications_req = []
-    members = team.get("members", [])
-    for member in members:
-        mid = member.get("uid")
-        if mid is not None:
-            notification = {
-                "sender_id": team.get("owner"),
-                "receiver_id": mid,
-                "notification_type": "TEAM_REVIEW",
-                "resource": "TEAMS",
-                "resource_id": team.get("tid"),
-                "metadata": {"project": project, "team": team},
-            }
-            url = config.NOTIFICATION_SERVICE_URL
-            resource = "notifications/"
-            params = {}
-            req = Services.post(url, resource, params, notification, async_mode=True)
-            notifications_req.append(req)
+    try:
+        notifications_req = []
+        members = team.get("members", [])
+        print(f"members to send notification: {members}")
+        for member in members:
+            mid = member.get("uid")
+            print(f"member id: {mid}")
+            if mid is not None:
+                notification = {
+                    "sender_id": team.get("owner"),
+                    "receiver_id": mid,
+                    "notification_type": "TEAM_REVIEW",
+                    "resource": "TEAMS",
+                    "resource_id": team.get("tid"),
+                    "metadata": {"project": project, "team": team},
+                }
+                url = config.NOTIFICATION_SERVICE_URL
+                resource = "notifications/"
+                params = {}
+                req = Services.post(
+                    url, resource, params, notification, async_mode=True
+                )
+                notifications_req.append(req)
 
-    if len(notifications_req) > 0:
-        Services.execute_many(notifications_req)
+        if len(notifications_req) > 0:
+            Services.execute_many(notifications_req)
+    except Exception as e:
+        print(f"error to send notifications for team review, e: {e}")
