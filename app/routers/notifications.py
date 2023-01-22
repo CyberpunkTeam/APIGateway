@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app import config
-from app.models.project_states import ProjectStates
+
 from app.models.requests.notifications.notification_update import NotificationUpdate
 from app.models.requests.notifications.team_invitation import TeamInvitation
 from app.models.requests.projects.project_abandonment import ProjectAbandonment
@@ -8,7 +8,7 @@ from app.models.requests.projects.project_abandons_request import (
     ProjectAbandonsRequests,
 )
 from app.models.requests.projects.project_requests import ProjectRequests
-from app.models.requests.projects.project_update import ProjectsUpdate
+
 from app.models.requests.projects.request_states import RequestStates
 from app.models.requests.projects.team_postulation import TeamPostulation
 from app.models.requests.projects.team_postulation_response import (
@@ -234,7 +234,6 @@ async def create_project_finished_request_notification(requests: ProjectRequests
     "/notifications/project_abandonment/", tags=["notifications"], status_code=201
 )
 def create_abandoned_project_notification(project_abandonment: ProjectAbandonment):
-    project_abandonment_id = None
     if project_abandonment.request_id is not None:
         url = config.PROJECT_SERVICE_URL
         resource = f"/project_abandons_requests/{project_abandonment.request_id}"
@@ -254,10 +253,7 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
         if body_to_update.get("request_id", False):
             del body_to_update["request_id"]
 
-        project_abandonment_result = Services.post(
-            url, resource, params, body_to_update
-        )
-        project_abandonment_id = project_abandonment_result.get("pa_id")
+        Services.post(url, resource, params, body_to_update)
 
     pid = project_abandonment.pid
     tid = project_abandonment.tid
@@ -278,10 +274,8 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
         "sender_id": team.get("tid"),
         "receiver_id": project.get("creator_uid"),
         "notification_type": "ABANDONED_PROJECT",
-        "resource": "PROJECT_ABANDONMENT",
-        "resource_id": project_abandonment_id
-        if project_abandonment_id is not None
-        else "",
+        "resource": "PROJECTS",
+        "resource_id": project.get("pid"),
         "metadata": {
             "project": project,
             "team": team,
