@@ -279,7 +279,9 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
         "receiver_id": project.get("creator_uid"),
         "notification_type": "ABANDONED_PROJECT",
         "resource": "PROJECT_ABANDONMENT",
-        "resource_id": project_abandonment_id,
+        "resource_id": project_abandonment_id
+        if project_abandonment_id is not None
+        else "",
         "metadata": {
             "project": project,
             "team": team,
