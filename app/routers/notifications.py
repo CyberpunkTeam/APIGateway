@@ -242,7 +242,7 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
         Services.put(url, resource, params, body)
 
     if (project_abandonment.state == RequestStates.ACCEPTED) or (
-        project_abandonment.request_id is not None and project_abandonment.state is None
+        project_abandonment.request_id is None and project_abandonment.state is None
     ):
         url = config.PROJECT_SERVICE_URL
         resource = "project_abandonment/"
