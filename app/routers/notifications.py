@@ -320,7 +320,7 @@ def create_project_abandons_request_notification(
     notification = {
         "sender_id": project.get("creator_uid"),
         "receiver_id": team.get("owner"),
-        "notification_type": "ABANDONED_PROJECT_REQUEST",
+        "notification_type": "PROJECT_ABANDONS_REQUEST",
         "resource": "PROJECT_ABANDONS_REQUEST",
         "resource_id": project_abandons_requests_result.get("par_id"),
         "metadata": {"project": project, "team": team},
