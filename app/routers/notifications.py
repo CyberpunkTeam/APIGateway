@@ -235,16 +235,11 @@ async def create_project_finished_request_notification(requests: ProjectRequests
 )
 def create_abandoned_project_notification(project_abandonment: ProjectAbandonment):
     if project_abandonment.request_id is not None:
-        print("entro a actualizar el project_abandonment_request")
-        try:
-            url = config.PROJECT_SERVICE_URL
-            resource = f"/project_abandons_requests/{project_abandonment.request_id}"
-            params = {}
-            body = {"state": project_abandonment.state}
-            result = Services.put(url, resource, params, body)
-            print(f"project abandoment requests result: {result}")
-        except Exception as e:
-            print(f"ocurrio un error, {e}")
+        url = config.PROJECT_SERVICE_URL
+        resource = f"/project_abandons_requests/{project_abandonment.request_id}"
+        params = {}
+        body = {"state": project_abandonment.state}
+        Services.put(url, resource, params, body)
 
     if (project_abandonment.state == RequestStates.ACCEPTED) or (
         project_abandonment.request_id is not None and project_abandonment.state is None
