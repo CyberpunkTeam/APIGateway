@@ -242,7 +242,9 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
         body = {"state": project_abandonment.state}
         Services.put(url, resource, params, body)
 
-    if project_abandonment.state == RequestStates.ACCEPTED:
+    if (project_abandonment.state == RequestStates.ACCEPTED) or (
+        project_abandonment.request_id is not None and project_abandonment.state is None
+    ):
         url = config.PROJECT_SERVICE_URL
         resource = "project_abandonment/"
         params = {}
@@ -277,7 +279,9 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
         "receiver_id": project.get("creator_uid"),
         "notification_type": "ABANDONED_PROJECT",
         "resource": "PROJECT_ABANDONMENT",
-        "resource_id": project_abandonment_id,
+        "resource_id": project_abandonment_id
+        if project_abandonment_id is not None
+        else "",
         "metadata": {
             "project": project,
             "team": team,
