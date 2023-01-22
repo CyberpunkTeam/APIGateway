@@ -67,13 +67,13 @@ async def get_team(tid: str):
     reviews, members_info = Services.execute_many([reviews_req, members_info_req])
 
     total_ratings = 0
-    amount_ratins = 0
+    amount_ratings = 0
     for review in reviews:
-        amount_ratins += 1
+        amount_ratings += 1
         total_ratings += review.get("rating", 0)
 
     team["overall_rating"] = (
-        float(total_ratings) / amount_ratins if amount_ratins > 0 else 0
+        float(total_ratings) / amount_ratings if amount_ratings > 0 else 0
     )
     team["reviews"] = reviews
     team["members"] = members_info
