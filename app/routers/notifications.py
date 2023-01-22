@@ -162,21 +162,25 @@ async def create_project_finished_notification(requests: ProjectRequests):
     pid = requests.pid
     tid = requests.tid
 
-    url = config.TEAM_SERVICE_URL
-    resource = f"teams/{tid}"
-    params = {}
-    team = Services.get(url, resource, params)
-
     url = config.PROJECT_SERVICE_URL
     resource = f"/project_finished_requests/{requests.request_id}"
     params = {}
     body = {"state": requests.state}
     Services.put(url, resource, params, body)
 
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    team_req = Services.get(url, resource, params, async_mode=True)
+
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
-    project = Services.get(url, resource, params)
+    project_req = Services.get(url, resource, params, async_mode=True)
+    team, project = Services.execute_many([team_req, project_req])
+
+    send_team_review_notification(team, project)
+
     notification = {
         "sender_id": team.get("tid"),
         "receiver_id": project.get("creator_uid"),
@@ -325,8 +329,33 @@ def create_project_abandons_request_notification(
         "resource_id": project_abandons_requests_result.get("par_id"),
         "metadata": {"project": project, "team": team},
     }
+
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
     params = {}
 
     return Services.post(url, resource, params, notification)
+
+
+def send_team_review_notification(team, project):
+    notifications_req = []
+    members = team.get("members", [])
+    for member in members:
+        mid = member.get("uid")
+        if mid is not None:
+            notification = {
+                "sender_id": team.get("owner"),
+                "receiver_id": mid,
+                "notification_type": "TEAM_REVIEW",
+                "resource": "TEAMS",
+                "resource_id": team.get("tid"),
+                "metadata": {"project": project, "team": team},
+            }
+            url = config.NOTIFICATION_SERVICE_URL
+            resource = "notifications/"
+            params = {}
+            req = Services.post(url, resource, params, notification, async_mode=True)
+            notifications_req.append(req)
+
+    if len(notifications_req) > 0:
+        Services.execute_many(notifications_req)
