@@ -341,10 +341,8 @@ def send_team_review_notification(team, project):
     try:
         notifications_req = []
         members = team.get("members", [])
-        print(f"members to send notification: {members}")
-        for member in members:
-            mid = member.get("uid")
-            print(f"member id: {mid}")
+
+        for mid in members:
             if mid is not None:
                 notification = {
                     "sender_id": team.get("owner"),
