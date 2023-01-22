@@ -234,7 +234,6 @@ async def create_project_finished_request_notification(requests: ProjectRequests
     "/notifications/project_abandonment/", tags=["notifications"], status_code=201
 )
 def create_abandoned_project_notification(project_abandonment: ProjectAbandonment):
-    project_abandonment_id = None
     if project_abandonment.request_id is not None:
         url = config.PROJECT_SERVICE_URL
         resource = f"/project_abandons_requests/{project_abandonment.request_id}"
@@ -254,10 +253,7 @@ def create_abandoned_project_notification(project_abandonment: ProjectAbandonmen
         if body_to_update.get("request_id", False):
             del body_to_update["request_id"]
 
-        project_abandonment_result = Services.post(
-            url, resource, params, body_to_update
-        )
-        project_abandonment_id = project_abandonment_result.get("pa_id")
+        Services.post(url, resource, params, body_to_update)
 
     pid = project_abandonment.pid
     tid = project_abandonment.tid
