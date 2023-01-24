@@ -26,20 +26,26 @@ async def get_profile(user_id: str):
         [req_user_data, req_team_data, req_projects]
     )
 
-    url = config.PROJECT_SERVICE_URL
-    resource = "projects_reviews/"
-    params = {"tid": team_data.get("tid")}
-    reviews = Services.get(url, resource, params)
+    reviews_reqs = []
+    for team in team_data:
+        url = config.PROJECT_SERVICE_URL
+        resource = "projects_reviews/"
+        params = {"tid": team.get("tid")}
+        reviews_req = Services.get(url, resource, params, async_mode=True)
+        reviews_reqs.append(reviews_req)
+    reviews = Services.execute_many(reviews_reqs)
 
-    total_ratings = 0
-    amount_ratings = 0
-    for review in reviews:
-        amount_ratings += 1
-        total_ratings += review.get("rating", 0)
+    for i in range(len(team_data)):
 
-    team_data["overall_rating"] = round(
-        float(total_ratings) / amount_ratings if amount_ratings > 0 else 0, 1
-    )
-    team_data["reviews"] = reviews
+        total_ratings = 0
+        amount_ratings = 0
+        for review in reviews[i]:
+            amount_ratings += 1
+            total_ratings += review.get("rating", 0)
+
+        team_data[i]["overall_rating"] = round(
+            float(total_ratings) / amount_ratings if amount_ratings > 0 else 0, 1
+        )
+        team_data[i]["reviews"] = reviews
 
     return {"user": user_data, "teams": team_data, "projects": projects}
