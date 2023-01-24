@@ -26,4 +26,20 @@ async def get_profile(user_id: str):
         [req_user_data, req_team_data, req_projects]
     )
 
+    url = config.PROJECT_SERVICE_URL
+    resource = "projects_reviews/"
+    params = {"tid": team_data.get("tid")}
+    reviews = Services.get(url, resource, params)
+
+    total_ratings = 0
+    amount_ratings = 0
+    for review in reviews:
+        amount_ratings += 1
+        total_ratings += review.get("rating", 0)
+
+    team_data["overall_rating"] = round(
+        float(total_ratings) / amount_ratings if amount_ratings > 0 else 0, 1
+    )
+    team_data["reviews"] = reviews
+
     return {"user": user_data, "teams": team_data, "projects": projects}

@@ -134,6 +134,28 @@ async def get_team_postulations(pid: str = None, tid: str = None, state: States 
         for i in range(len(postulations)):
             postulations[i]["team"] = teams[i]
 
+        reviews_reqs = []
+        for team in teams:
+            url = config.PROJECT_SERVICE_URL
+            resource = "projects_reviews/"
+            params = {"tid": team.get("tid")}
+            reviews_req = Services.get(url, resource, params, async_mode=True)
+            reviews_reqs.append(reviews_req)
+        reviews = Services.execute_many(reviews_reqs)
+
+        for i in range(len(teams)):
+
+            total_ratings = 0
+            amount_ratings = 0
+            for review in reviews[i]:
+                amount_ratings += 1
+                total_ratings += review.get("rating", 0)
+
+            teams[i]["overall_rating"] = round(
+                float(total_ratings) / amount_ratings if amount_ratings > 0 else 0, 1
+            )
+            teams[i]["reviews"] = reviews
+
     return postulations
 
 
