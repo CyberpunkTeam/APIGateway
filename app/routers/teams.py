@@ -58,8 +58,8 @@ async def get_team(tid: str):
     resource = f"users/?uids={query_param}"
     members_info_req = Services.get(url, resource, params, async_mode=True)
 
-    url = config.PROJECT_SERVICE_URL
-    resource = "projects_reviews/"
+    url = config.TEAM_SERVICE_URL
+    resource = "teams_reviews/"
     params = {"tid": tid}
 
     reviews_req = Services.get(url, resource, params, async_mode=True)

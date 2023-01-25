@@ -28,8 +28,8 @@ async def get_profile(user_id: str):
 
     reviews_reqs = []
     for team in team_data:
-        url = config.PROJECT_SERVICE_URL
-        resource = "projects_reviews/"
+        url = config.TEAM_SERVICE_URL
+        resource = "teams_reviews/"
         params = {"tid": team.get("tid")}
         reviews_req = Services.get(url, resource, params, async_mode=True)
         reviews_reqs.append(reviews_req)
