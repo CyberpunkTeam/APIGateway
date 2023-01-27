@@ -2,7 +2,9 @@ from fastapi import APIRouter
 from app import config
 from app.models.project_states import ProjectStates
 from app.models.requests.projects.project_update import ProjectsUpdate
+from app.models.requests.teams.position_states import PositionStates
 from app.models.requests.teams.team_update import TeamUpdate
+from app.models.requests.teams.teams_positions import TeamsPositions
 from app.services import Services
 
 router = APIRouter()
@@ -176,4 +178,34 @@ async def get_team_member_review(
         params["member_reviewer"] = member_reviewer
     if member_reviewed is not None:
         params["member_reviewed"] = member_reviewed
+    return Services.get(url, resource, params)
+
+
+@router.post("/teams_positions/", tags=["teams"], status_code=201)
+async def create_team_position(team_position: TeamsPositions):
+    url = config.TEAM_SERVICE_URL
+    resource = "teams_positions/"
+    params = {}
+    return Services.post(url, resource, params, team_position.to_json())
+
+
+@router.get("/teams_positions/", tags=["teams"], status_code=200)
+async def list_team_position(tid: str = None, state: PositionStates = None):
+    url = config.TEAM_SERVICE_URL
+    resource = "teams_positions/"
+    params = {}
+    if tid is not None:
+        params["tid"] = tid
+    if state is not None:
+        params["state"] = state
+
+    return Services.get(url, resource, params)
+
+
+@router.get("/teams_positions/{tpid}", tags=["teams"], status_code=200)
+async def get_team_position(tpid: str):
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams_positions/{tpid}"
+    params = {}
+
     return Services.get(url, resource, params)
