@@ -209,3 +209,29 @@ async def get_team_position(tpid: str):
     params = {}
 
     return Services.get(url, resource, params)
+
+
+@router.post(
+    "/teams_positions/{tpid}/candidates/{uid}",
+    tags=["teams_positions"],
+    response_model=TeamsPositions,
+)
+async def add_candidate(tpid: str, uid: str):
+    url = config.TEAM_SERVICE_URL
+    resource = f"/teams_positions/{tpid}/candidates/{uid}"
+    params = {}
+
+    return Services.post(url, resource, params)
+
+
+@router.delete(
+    "/teams_positions/{tpid}/candidates/{uid}",
+    tags=["teams_positions"],
+    response_model=TeamsPositions,
+)
+async def remove_candidate(tpid: str, uid: str):
+    url = config.TEAM_SERVICE_URL
+    resource = f"/teams_positions/{tpid}/candidates/{uid}"
+    params = {}
+
+    return Services.delete(url, resource, params)

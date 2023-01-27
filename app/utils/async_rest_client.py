@@ -45,3 +45,20 @@ class AsyncRestClient:
             else:
                 print(f"Error to get:{url} - status: {status}")
                 return None
+
+    @staticmethod
+    async def delete(url, session):
+        async with session.delete(url) as resp:
+            status = await resp.status
+            if 200 <= status < 400:
+                return await resp.json()
+            elif 400 <= status < 500:
+                if "application/json" in resp.headers.get("Content-Type", ""):
+                    json = resp.json()
+                    message = await json.get("message", "Not Found")
+                    if "detail" in json:
+                        message = json.get("detail")
+                raise HTTPException(status_code=status, detail=message)
+            else:
+                print(f"Error to get:{url} - status: {status}")
+                return None
