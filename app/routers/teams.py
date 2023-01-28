@@ -217,7 +217,7 @@ async def get_team_position(tpid: str):
 
 @router.post(
     "/teams_positions/{tpid}/candidates/{uid}",
-    tags=["teams_positions"],
+    tags=["teams"],
 )
 async def add_candidate(tpid: str, uid: str):
     url = config.TEAM_SERVICE_URL
@@ -232,7 +232,7 @@ async def add_candidate(tpid: str, uid: str):
 
 @router.delete(
     "/teams_positions/{tpid}/candidates/{uid}",
-    tags=["teams_positions"],
+    tags=["teams"],
 )
 async def remove_candidate(tpid: str, uid: str):
     url = config.TEAM_SERVICE_URL
