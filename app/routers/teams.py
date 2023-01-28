@@ -5,6 +5,10 @@ from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.position_states import PositionStates
 from app.models.requests.teams.team_update import TeamUpdate
 from app.models.requests.teams.teams_positions import TeamsPositions
+from app.routers.notifications import (
+    send_new_candidate_notification,
+    send_position_postulation_accepted_notification,
+)
 from app.services import Services
 
 router = APIRouter()
@@ -214,20 +218,21 @@ async def get_team_position(tpid: str):
 @router.post(
     "/teams_positions/{tpid}/candidates/{uid}",
     tags=["teams_positions"],
-    response_model=TeamsPositions,
 )
 async def add_candidate(tpid: str, uid: str):
     url = config.TEAM_SERVICE_URL
     resource = f"/teams_positions/{tpid}/candidates/{uid}"
     params = {}
+    result = Services.post(url, resource, params)
 
-    return Services.post(url, resource, params)
+    send_new_candidate_notification(tpid, uid)
+
+    return result
 
 
 @router.delete(
     "/teams_positions/{tpid}/candidates/{uid}",
     tags=["teams_positions"],
-    response_model=TeamsPositions,
 )
 async def remove_candidate(tpid: str, uid: str):
     url = config.TEAM_SERVICE_URL
@@ -235,3 +240,22 @@ async def remove_candidate(tpid: str, uid: str):
     params = {}
 
     return Services.delete(url, resource, params)
+
+
+@router.post("/teams/{tid}/teams_positions/{tpid}/candidates/{uid}", tags=["teams"])
+async def accept_candidate(tid: str, tpid: str, uid: str):
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}/members/{uid}"
+    params = {}
+
+    new_members = Services.post(url, resource, params)
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"/teams_positions/{tpid}/candidates/{uid}"
+    params = {}
+
+    Services.delete(url, resource, params)
+
+    send_position_postulation_accepted_notification(tpid, uid)
+
+    return new_members

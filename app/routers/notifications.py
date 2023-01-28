@@ -364,3 +364,47 @@ def send_team_review_notification(team, project):
             Services.execute_many(notifications_req)
     except Exception as e:
         print(f"error to send notifications for team review, e: {e}")
+
+
+def send_new_candidate_notification(tpid, new_member_id):
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams_positions/{tpid}"
+    params = {}
+    position = Services.get(url, resource, params)
+
+    notification = {
+        "sender_id": new_member_id,
+        "receiver_id": position.get("team").get("owner"),
+        "notification_type": "NEW_TEAM_CANDIDATE",
+        "resource": "TEAMS_POSITIONS",
+        "resource_id": tpid,
+        "metadata": {"position": position},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
+
+
+def send_position_postulation_accepted_notification(tpid, new_member_id):
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams_positions/{tpid}"
+    params = {}
+    position = Services.get(url, resource, params)
+
+    notification = {
+        "sender_id": position.get("team").get("owner"),
+        "receiver_id": new_member_id,
+        "notification_type": "TEAM_POSITION_ACCEPTED",
+        "resource": "TEAMS",
+        "resource_id": position.get("team").get("tid"),
+        "metadata": {"position": position},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
