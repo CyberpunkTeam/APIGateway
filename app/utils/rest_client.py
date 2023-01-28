@@ -8,12 +8,22 @@ class RestClient:
     @staticmethod
     def get(url, headers):
         try:
-
             if headers == {}:
                 response = requests.get(url)
             else:
                 response = requests.get(url, headers=headers)
+            return RestClient.handle_response(response)
+        except Exception as e:
+            print(f"Error: {e}")
+            raise e
 
+    @staticmethod
+    def delete(url, headers):
+        try:
+            if headers == {}:
+                response = requests.delete(url)
+            else:
+                response = requests.delete(url, headers=headers)
             return RestClient.handle_response(response)
         except Exception as e:
             print(f"Error: {e}")

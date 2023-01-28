@@ -59,3 +59,11 @@ class Services:
         t.start()
         t.join()
         return result["result"]
+
+    @staticmethod
+    def delete(url, resource, params, async_mode=False):
+        headers = {}
+        endpoint = url + resource + HttpParser.parse_params(params)
+        if async_mode:
+            return partial(AsyncRestClient.delete, endpoint)
+        return RestClient.delete(endpoint, headers)
