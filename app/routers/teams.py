@@ -154,7 +154,25 @@ async def get_team_review(pid: str = None, tid: str = None):
         params["pid"] = pid
     if tid is not None:
         params["tid"] = tid
-    return Services.get(url, resource, params)
+
+    reviews = Services.get(url, resource, params)
+
+    if tid is not None:
+        reqs = []
+        for review in reviews:
+            pid = review.get("pid")
+            url = config.PROJECT_SERVICE_URL
+            resource = f"projects/{pid}"
+            params = {}
+            req_project = Services.get(url, resource, params, async_mode=True)
+            reqs.append(req_project)
+
+        projects = Services.execute_many(reqs)
+
+        for i in range(len(reviews)):
+            reviews[i]["project"] = projects[i]
+
+    return reviews
 
 
 @router.post("/team_members_reviews/", tags=["teams"], status_code=201)
