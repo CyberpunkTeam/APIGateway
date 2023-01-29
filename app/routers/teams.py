@@ -222,7 +222,22 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
     if state is not None:
         params["state"] = state
 
-    return Services.get(url, resource, params)
+    positions = Services.get(url, resource, params)
+    candidates_reqs = []
+    if tid is not None:
+        for position in positions:
+            canditates = position["canditates"]
+            query_param = "[" + ",".join(canditates) + "]"
+            url = config.USER_SERVICE_URL
+            resource = "users/"
+            params = {"uids": query_param}
+            candidates_req = Services.get(url, resource, params, async_mode=True)
+            candidates_reqs.append(candidates_req)
+
+        candidates_info = Services.execute_many(candidates_reqs)
+        for i in range(len(positions)):
+            positions[i]["canditates"] = candidates_info[i]
+    return positions
 
 
 @router.get("/teams_positions/{tpid}", tags=["teams"], status_code=200)
