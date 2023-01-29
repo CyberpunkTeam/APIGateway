@@ -236,7 +236,7 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
 
         candidates_info = Services.execute_many(candidates_reqs)
         for i in range(len(positions)):
-            positions[i]["canditates"] = candidates_info[i]
+            positions[i]["candidates"] = candidates_info[i]
     return positions
 
 
