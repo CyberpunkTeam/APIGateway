@@ -226,8 +226,8 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
     candidates_reqs = []
     if tid is not None:
         for position in positions:
-            canditates = position["canditates"]
-            query_param = "[" + ",".join(canditates) + "]"
+            candidates = position["candidates"]
+            query_param = "[" + ",".join(candidates) + "]"
             url = config.USER_SERVICE_URL
             resource = "users/"
             params = {"uids": query_param}
