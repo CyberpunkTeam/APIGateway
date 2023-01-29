@@ -3,6 +3,7 @@ from app import config
 from app.models.project_states import ProjectStates
 from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.position_states import PositionStates
+from app.models.requests.teams.team_position_update import TeamPositionUpdate
 from app.models.requests.teams.team_update import TeamUpdate
 from app.models.requests.teams.teams_positions import TeamsPositions
 from app.routers.notifications import (
@@ -213,6 +214,15 @@ async def get_team_position(tpid: str):
     params = {}
 
     return Services.get(url, resource, params)
+
+
+@router.put("/teams_positions/{tpid}", tags=["teams"], status_code=200)
+async def update_team_position(tpid: str, body: TeamPositionUpdate):
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams_positions/{tpid}"
+    params = {}
+
+    return Services.put(url, resource, params, body.to_json())
 
 
 @router.post(
