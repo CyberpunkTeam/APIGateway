@@ -179,8 +179,6 @@ async def create_project_finished_notification(requests: ProjectRequests):
     project_req = Services.get(url, resource, params, async_mode=True)
     team, project = Services.execute_many([team_req, project_req])
 
-    send_team_review_notification(team, project)
-
     notification = {
         "sender_id": team.get("tid"),
         "receiver_id": project.get("creator_uid"),
