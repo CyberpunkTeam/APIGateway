@@ -9,6 +9,7 @@ from app.models.requests.teams.teams_positions import TeamsPositions
 from app.routers.notifications import (
     send_new_candidate_notification,
     send_position_postulation_accepted_notification,
+    send_team_review_notification,
 )
 from app.services import Services
 
@@ -137,7 +138,14 @@ async def create_team_review(body: dict):
     resource = f"projects/{body.get('pid')}"
     project_update = ProjectsUpdate(state=ProjectStates.FINISHED)
     params = {}
-    Services.put(url, resource, params, project_update.to_json())
+    project = Services.put(url, resource, params, project_update.to_json())
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{body.get('tid')}"
+    params = {}
+    team = Services.get(url, resource, params)
+
+    send_team_review_notification(team, project)
 
     url = config.TEAM_SERVICE_URL
     resource = "teams_reviews/"
