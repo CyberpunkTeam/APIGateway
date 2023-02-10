@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from app.models.currency import Currency
 from app.models.project_states import ProjectStates
+from app.models.requests.projects.description import Description
 from app.models.technologies import Technologies
 from app.models.unit_duration import UnitDuration
 
@@ -13,7 +14,7 @@ from app.models.unit_duration import UnitDuration
 class ProjectsUpdate(BaseModel):
     name: Optional[str] = None
     idioms: Optional[List[str]] = None
-    description: Optional[str] = None
+    description: Optional[Description]
     technologies: Optional[Technologies]
     updated_date: Optional[str] = ""
     state: Optional[ProjectStates] = None
