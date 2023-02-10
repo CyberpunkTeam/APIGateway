@@ -125,7 +125,7 @@ async def add_member(tid: str, mid: str):
 
 
 @router.put("/teams/{tid}", tags=["teams"])
-async def put_user(tid: str, team_update: TeamUpdate):
+async def put_team(tid: str, team_update: TeamUpdate):
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{tid}"
     params = {}
