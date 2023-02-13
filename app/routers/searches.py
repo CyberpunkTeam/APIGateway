@@ -45,3 +45,11 @@ async def search(entity: Entity = None, word: str = ""):
         teams = Services.get(url, resource, params)
         result["teams"] = teams
     return result
+
+
+@router.get("/locations/", tags=["searches"])
+async def search_location(word: str = ""):
+    params = {"search": word}
+    url = config.USER_SERVICE_URL
+    resource = "locations/"
+    return Services.get(url, resource, params)
