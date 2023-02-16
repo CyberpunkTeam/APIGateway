@@ -76,7 +76,7 @@ jobs:
 
     - name: Get_file
       run: |-
-          gsutil cp gs://web_configuration/credentials.json .
+          gsutil cp gs://web_configuration_cred/credentials.json .
 
     - name: Build and Push Container
       run: |-
