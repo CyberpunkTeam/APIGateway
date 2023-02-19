@@ -23,6 +23,7 @@ class ProjectsUpdate(BaseModel):
     budget_currency: Optional[Currency]
     tentative_duration: Optional[int]
     unit_duration: Optional[UnitDuration]
+    project_type: Optional[str]
 
     def to_json(self):
         return loads(self.json(exclude_defaults=True))
