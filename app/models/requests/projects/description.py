@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class Description(BaseModel):
-    files_attached: Optional[List[str]] = []
+    files_attached: Optional[dict] = {}
     functional_requirements: Optional[List[str]] = []
     non_function_requirements: Optional[List[str]] = []
     summary: Optional[str] = ""
