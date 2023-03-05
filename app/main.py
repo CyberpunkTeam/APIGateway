@@ -10,6 +10,7 @@ from .routers import (
     invitations,
     searches,
     authentication,
+    recommendations,
 )
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -40,6 +41,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(recommendations.router, dependencies=[Security(authenticate)])
 app.include_router(users.router, dependencies=[Security(authenticate)])
 app.include_router(state.router, dependencies=[Security(authenticate)])
 app.include_router(teams.router, dependencies=[Security(authenticate)])
