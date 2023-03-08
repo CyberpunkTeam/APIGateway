@@ -3,6 +3,7 @@ from app import config
 from app.models.project_states import ProjectStates
 from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_invitations_update import States
+from app.routers.recommendations import _get_team_recommendations
 from app.services import Services
 
 router = APIRouter()
@@ -13,7 +14,10 @@ async def create_project(body: dict):
     url = config.PROJECT_SERVICE_URL
     resource = "projects/"
     params = {}
-    return Services.post(url, resource, params, body)
+    project = Services.post(url, resource, params, body)
+    teams_recommendations = _get_team_recommendations(project)
+    project["teams_recommendations"] = teams_recommendations
+    return project
 
 
 @router.get("/projects/", tags=["projects"])
