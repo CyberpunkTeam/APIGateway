@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from app import config
 
 from app.models.requests.notifications.notification_update import NotificationUpdate
+from app.models.requests.notifications.project_invitation import ProjectInvitation
 from app.models.requests.notifications.team_invitation import TeamInvitation
 from app.models.requests.projects.project_abandonment import ProjectAbandonment
 from app.models.requests.projects.project_abandons_request import (
@@ -399,6 +400,40 @@ def send_position_postulation_accepted_notification(tpid, new_member_id):
         "resource": "TEAMS",
         "resource_id": position.get("team").get("tid"),
         "metadata": {"position": position},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
+
+
+@router.post(
+    "/notifications/project_invitation/", tags=["notifications"], status_code=201
+)
+async def send_project_invitation_notification(project_invitation: ProjectInvitation):
+    pid = project_invitation.pid
+    tid = project_invitation.tid
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{pid}"
+    params = {}
+    req_project = Services.get(url, resource, params, async_mode=True)
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    req_team = Services.get(url, resource, params, async_mode=True)
+
+    project, team = Services.execute_many([req_project, req_team])
+
+    notification = {
+        "sender_id": project.get("creator_uid"),
+        "receiver_id": team.get("owner"),
+        "notification_type": "PROJECT_INVITATION",
+        "resource": "PROJECT",
+        "resource_id": pid,
+        "metadata": {"project": project, "team": team},
     }
 
     url = config.NOTIFICATION_SERVICE_URL
