@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app import config
+from app.routers.teams import _get_team
 from app.services import Services
 
 router = APIRouter()
@@ -8,10 +9,17 @@ router = APIRouter()
 
 @router.post("/recommendations/projects/", tags=["recommendations"], status_code=201)
 async def create_team_recommendations(project: dict):
+    return _get_team_recommendations(project)
+
+
+def _get_team_recommendations(project):
     url = config.RECOMMENDATION_SERVICE_URL
     resource = "recommendations/projects/"
     params = {}
-    return Services.post(url, resource, params, project)
+    tids = Services.post(url, resource, params, project)
+
+    teams = [_get_team(tid) for tid in tids]
+    return teams
 
 
 @router.post(

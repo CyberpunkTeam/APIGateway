@@ -54,6 +54,10 @@ async def get_teams(owner: str = None):
 
 @router.get("/teams/{tid}", tags=["teams"], status_code=200)
 async def get_team(tid: str):
+    return _get_team(tid)
+
+
+def _get_team(tid: str):
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{tid}"
     params = {}
