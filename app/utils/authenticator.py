@@ -45,3 +45,8 @@ class Authenticator:
         date -= timedelta(days=int(os.environ.get("TTL_DAYS", 1)))
 
         return created_date < date
+
+    @staticmethod
+    def get_user_id(token):
+        value = Authenticator.decode_token(token)
+        return value.get("user_id")

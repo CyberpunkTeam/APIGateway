@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from typing import Union
+
+from fastapi import APIRouter, Header, HTTPException
 from app import config
 
 from app.models.requests.notifications.notification_update import NotificationUpdate
@@ -16,6 +18,7 @@ from app.models.requests.projects.team_postulation_response import (
     TeamPostulationResponse,
 )
 from app.services import Services
+from app.utils.authenticator import Authenticator
 
 router = APIRouter()
 
@@ -85,12 +88,9 @@ async def put_notifications(nids: str):
 @router.post(
     "/notifications/team_postulation/", tags=["notifications"], status_code=201
 )
-async def create_team_postulation_to_project(body: TeamPostulation):
-    url = config.PROJECT_SERVICE_URL
-    resource = f"projects/postulations/"
-    params = {}
-    response = Services.post(url, resource, params, body.to_json())
-
+async def create_team_postulation_to_project(
+    body: TeamPostulation, x_tiger_token: Union[str, None] = Header(default=None)
+):
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{body.tid}"
     params = {}
@@ -102,6 +102,27 @@ async def create_team_postulation_to_project(body: TeamPostulation):
     req_project = Services.get(url, resource, params, async_mode=True)
 
     team, project = Services.execute_many([req_team, req_project])
+
+    team_owner = team.get("owner")
+    token_user = Authenticator.get_user_id(x_tiger_token.replace("Bearer ", ""))
+    project_owner = project.get("creator_uid")
+
+    if team_owner != token_user:
+        raise HTTPException(
+            status_code=401,
+            detail="Only team owner can postulate his team to a project",
+        )
+
+    if team_owner == project_owner:
+        raise HTTPException(
+            status_code=401,
+            detail="Project owner and team owner can't be the same person",
+        )
+
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/postulations/"
+    params = {}
+    response = Services.post(url, resource, params, body.to_json())
 
     notification = {
         "sender_id": body.tid,
