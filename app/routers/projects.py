@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from typing import Union
+
+from fastapi import APIRouter, Header, HTTPException
 from app import config
 from app.models.currency import Currency
 from app.models.project_states import ProjectStates
@@ -6,6 +8,7 @@ from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_invitations_update import States
 from app.routers.recommendations import _get_team_recommendations
 from app.services import Services
+from app.utils.authenticator import Authenticator
 
 router = APIRouter()
 
@@ -115,10 +118,25 @@ def add_creator(project):
 
 
 @router.put("/projects/{pid}", tags=["projects"])
-async def put_projects(pid: str, project_update: ProjectsUpdate):
+async def put_projects(
+    pid: str,
+    project_update: ProjectsUpdate,
+    x_tiger_token: Union[str, None] = Header(default=None),
+):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
+    project = Services.get(url, resource, params)
+
+    token_user = Authenticator.get_user_id(x_tiger_token.replace("Bearer ", ""))
+    project_owner = project.get("creator_uid")
+
+    if token_user != project_owner:
+        raise HTTPException(
+            status_code=401,
+            detail="Project owner only has authorization for project updating",
+        )
+
     return Services.put(url, resource, params, project_update.to_json())
 
 
