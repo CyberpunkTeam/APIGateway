@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from typing import Union
+
+from fastapi import APIRouter, Header, HTTPException
 from app import config
 from app.models.project_states import ProjectStates
 from app.models.requests.projects.project_update import ProjectsUpdate
@@ -12,6 +14,7 @@ from app.routers.notifications import (
     send_team_review_notification,
 )
 from app.services import Services
+from app.utils.authenticator import Authenticator
 
 router = APIRouter()
 
@@ -129,10 +132,24 @@ async def add_member(tid: str, mid: str):
 
 
 @router.put("/teams/{tid}", tags=["teams"])
-async def put_team(tid: str, team_update: TeamUpdate):
+async def put_team(
+    tid: str,
+    team_update: TeamUpdate,
+    x_tiger_token: Union[str, None] = Header(default=None),
+):
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{tid}"
     params = {}
+    team = Services.get(url, resource, params)
+    team_owner = team.get("owner")
+    token_user = Authenticator.get_user_id(x_tiger_token.replace("Bearer ", ""))
+
+    if team_owner != token_user:
+        raise HTTPException(
+            status_code=401,
+            detail="Only team owner can update his team",
+        )
+
     return Services.put(url, resource, params, team_update.to_json())
 
 
