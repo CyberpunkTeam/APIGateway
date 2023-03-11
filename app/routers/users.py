@@ -1,7 +1,10 @@
-from fastapi import APIRouter
+from typing import Union
+
+from fastapi import APIRouter, Header, HTTPException
 from app import config
 from app.models.requests.users.user_update import UserUpdate
 from app.services import Services
+from app.utils.authenticator import Authenticator
 
 router = APIRouter()
 
@@ -31,7 +34,19 @@ async def read_user(user_id: str):
 
 
 @router.put("/users/{user_id}", tags=["users"])
-async def put_user(user_id: str, user_update: UserUpdate):
+async def put_user(
+    user_id: str,
+    user_update: UserUpdate,
+    x_tiger_token: Union[str, None] = Header(default=None),
+):
+    token_user = Authenticator.get_user_id(x_tiger_token.replace("Bearer ", ""))
+
+    if user_id != token_user:
+        raise HTTPException(
+            status_code=401,
+            detail="Not authorization for user updating ",
+        )
+
     url = config.USER_SERVICE_URL
     resource = f"users/{user_id}"
     params = {}
