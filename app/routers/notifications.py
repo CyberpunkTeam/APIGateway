@@ -106,7 +106,9 @@ async def create_team_postulation_to_project(
     team_owner = team.get("owner")
     token_user = Authenticator.get_user_id(x_tiger_token.replace("Bearer ", ""))
     project_owner = project.get("creator_uid")
-
+    print(
+        f"team_owner: {team_owner}, token_user: {token_user}, project_owner: {project_owner}"
+    )
     if team_owner != token_user:
         raise HTTPException(
             status_code=401,
