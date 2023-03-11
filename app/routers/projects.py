@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app import config
+from app.models.currency import Currency
 from app.models.project_states import ProjectStates
 from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_invitations_update import States
@@ -21,7 +22,19 @@ async def create_project(body: dict):
 
 
 @router.get("/projects/", tags=["projects"])
-async def list_projects(creator_uid: str = None, state: ProjectStates = None):
+async def list_projects(
+    creator_uid: str = None,
+    state: ProjectStates = None,
+    currency: Currency = None,
+    min_budget: float = None,
+    max_budget: float = None,
+    project_types: str = None,
+    idioms: str = None,
+    programming_languages: str = None,
+    frameworks: str = None,
+    platforms: str = None,
+    databases: str = None,
+):
     url = config.PROJECT_SERVICE_URL
     resource = "projects/"
     params = {}
@@ -30,6 +43,33 @@ async def list_projects(creator_uid: str = None, state: ProjectStates = None):
 
     if state is not None:
         params["state"] = state
+
+    if currency is not None:
+        params["currency"] = currency
+
+    if min_budget is not None:
+        params["min_budget"] = min_budget
+
+    if max_budget is not None:
+        params["max_budget"] = max_budget
+
+    if project_types is not None:
+        params["project_types"] = project_types
+
+    if idioms is not None:
+        params["idioms"] = idioms
+
+    if programming_languages is not None:
+        params["programming_languages"] = programming_languages
+
+    if databases is not None:
+        params["databases"] = databases
+
+    if platforms is not None:
+        params["platforms"] = platforms
+
+    if frameworks is not None:
+        params["frameworks"] = frameworks
 
     projects = Services.get(url, resource, params)
     return list(map(add_creator, projects))
