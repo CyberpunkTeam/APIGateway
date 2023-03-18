@@ -19,6 +19,12 @@ def _get_team_recommendations(project):
     tids = Services.post(url, resource, params, project)
 
     teams = [_get_team(tid) for tid in tids]
+    teams = list(
+        filter(
+            lambda team: team.get("owner") != project.get("creator", {}).get("uid"),
+            teams,
+        )
+    )
     return teams
 
 
