@@ -12,7 +12,7 @@ async def create_team_recommendations(project: dict):
     return _get_team_recommendations(project)
 
 
-def _get_team_recommendations(project):
+def _get_team_recommendations(project, new_project=False):
     url = config.RECOMMENDATION_SERVICE_URL
     resource = "recommendations/projects/"
     params = {}
@@ -29,6 +29,30 @@ def _get_team_recommendations(project):
     teams = list(
         sorted(teams, key=lambda team: team.get("overall_rating"), reverse=True)
     )
+
+    teams = teams[:5]
+    if not new_project:
+        requests_not = []
+        for team in teams:
+            receiver_id = team.get("owner")
+            sender_id = project.get("creator", {}).get("uid")
+            resource_id = project.get("pid")
+
+            url = config.NOTIFICATION_SERVICE_URL
+            resource = "notifications/"
+            params = {
+                "receiver_id": receiver_id,
+                "sender_id": sender_id,
+                "resource_id": resource_id,
+            }
+            req = Services.get(url, resource, params, async_mode=True)
+            requests_not.append(req)
+        notifications = Services.execute_many(requests_not)
+
+        for i in range(len(notifications)):
+            notification_list = notifications[i]
+            teams[i]["sent_notification"] = len(notification_list) > 0
+
     return teams
 
 

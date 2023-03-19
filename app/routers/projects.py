@@ -19,7 +19,7 @@ async def create_project(body: dict):
     resource = "projects/"
     params = {}
     project = Services.post(url, resource, params, body)
-    teams_recommendations = _get_team_recommendations(project)
+    teams_recommendations = _get_team_recommendations(project, new_project=True)
     project["teams_recommendations"] = teams_recommendations
     return project
 
