@@ -25,6 +25,10 @@ def _get_team_recommendations(project):
             teams,
         )
     )
+
+    teams = list(
+        sorted(teams, key=lambda team: team.get("overall_rating"), reverse=True)
+    )
     return teams
 
 
