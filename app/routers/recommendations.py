@@ -73,4 +73,15 @@ async def create_team_recommendations(user: dict):
     url = config.RECOMMENDATION_SERVICE_URL
     resource = "recommendations/users/"
     params = {}
-    return Services.post(url, resource, params, user)
+    tpids = Services.post(url, resource, params, user)
+
+    reqs = []
+    for tpid in tpids:
+        url = config.TEAM_SERVICE_URL
+        resource = f"teams_positions/{tpid}"
+        params = {}
+
+        reqs.append(Services.get(url, resource, params, async_mode=True))
+
+    results = Services.execute_many(reqs)
+    return results
