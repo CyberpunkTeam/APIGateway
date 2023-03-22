@@ -66,3 +66,11 @@ async def create_team_recommendations(recommender_name: str):
     resource = f"/recommendations/models/{recommender_name}/training"
     params = {}
     return Services.post(url, resource, params, {})
+
+
+@router.post("/recommendations/users/", tags=["recommendations"], status_code=201)
+async def create_team_recommendations(user: dict):
+    url = config.RECOMMENDATION_SERVICE_URL
+    resource = "recommendations/users/"
+    params = {}
+    return Services.post(url, resource, params, user)
