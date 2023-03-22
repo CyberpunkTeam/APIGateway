@@ -84,4 +84,12 @@ async def create_team_recommendations(user: dict):
         reqs.append(Services.get(url, resource, params, async_mode=True))
 
     results = Services.execute_many(reqs)
+
+    results = list(
+        filter(
+            lambda position: position.get("team").get("owner") != user.get("uid"),
+            results,
+        )
+    )
+
     return results
