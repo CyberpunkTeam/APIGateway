@@ -269,16 +269,16 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
             positions[i]["candidates"] = candidates_info[i]
 
     if state == PositionStates.OPEN and tid is not None:
-        reqs = []
+        uids = []
         for position in positions:
             url = config.RECOMMENDATION_SERVICE_URL
             resource = "recommendations/teams_positions/"
             params = {}
             position_i = dict(position)
             del position_i["candidates"]
-            req = Services.post(url, resource, params, position_i, async_mode=True)
-            reqs.append(req)
-        uids = Services.execute_many(reqs)
+            uids_i = Services.post(url, resource, params, position_i)
+            uids.append(uids_i)
+        # uids = Services.execute_many(reqs)
         for i in range(len(positions)):
             position_i = positions[i]
             uids_i = uids[i]
