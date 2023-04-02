@@ -4,6 +4,7 @@ from fastapi import APIRouter, Header, HTTPException
 from app import config
 
 from app.models.requests.notifications.notification_update import NotificationUpdate
+from app.models.requests.notifications.position_invitation import PositionInvitation
 from app.models.requests.notifications.project_invitation import ProjectInvitation
 from app.models.requests.notifications.team_invitation import TeamInvitation
 from app.models.requests.projects.project_abandonment import ProjectAbandonment
@@ -455,6 +456,36 @@ async def send_project_invitation_notification(project_invitation: ProjectInvita
         "resource": "PROJECT",
         "resource_id": pid,
         "metadata": {"project": project, "team": team},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
+
+
+@router.post(
+    "/notifications/teams_positions_invitations/",
+    tags=["notifications"],
+    status_code=201,
+)
+async def send_project_invitation_notification(position_invitation: PositionInvitation):
+    uid = position_invitation.uid
+    tpid = position_invitation.tpid
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams_positions/{tpid}"
+    params = {}
+    team_position = Services.get(url, resource, params)
+
+    notification = {
+        "sender_id": team_position.get("tid"),
+        "receiver_id": uid,
+        "notification_type": "POSITION_INVITATION",
+        "resource": "TEAMS_POSITIONS",
+        "resource_id": tpid,
+        "metadata": {"team_position": team_position},
     }
 
     url = config.NOTIFICATION_SERVICE_URL
