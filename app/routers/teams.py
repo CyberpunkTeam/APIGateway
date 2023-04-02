@@ -252,20 +252,6 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
         params["state"] = state
 
     positions = Services.get(url, resource, params)
-    candidates_reqs = []
-    if tid is not None:
-        for position in positions:
-            candidates = position["candidates"]
-            query_param = "[" + ",".join(candidates) + "]"
-            url = config.USER_SERVICE_URL
-            resource = "users/"
-            params = {"uids": query_param}
-            candidates_req = Services.get(url, resource, params, async_mode=True)
-            candidates_reqs.append(candidates_req)
-
-        candidates_info = Services.execute_many(candidates_reqs)
-        for i in range(len(positions)):
-            positions[i]["candidates"] = candidates_info[i]
 
     if state == PositionStates.OPEN and tid is not None:
         reqs = []
@@ -289,6 +275,21 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
                 position_i["users_recommendation"] = users
             else:
                 position_i["users_recommendation"] = []
+
+    candidates_reqs = []
+    if tid is not None:
+        for position in positions:
+            candidates = position["candidates"]
+            query_param = "[" + ",".join(candidates) + "]"
+            url = config.USER_SERVICE_URL
+            resource = "users/"
+            params = {"uids": query_param}
+            candidates_req = Services.get(url, resource, params, async_mode=True)
+            candidates_reqs.append(candidates_req)
+
+        candidates_info = Services.execute_many(candidates_reqs)
+        for i in range(len(positions)):
+            positions[i]["candidates"] = candidates_info[i]
 
     return positions
 
