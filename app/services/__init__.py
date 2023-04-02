@@ -58,6 +58,7 @@ class Services:
         )
         t.start()
         t.join()
+        print(f"result: {result}")
         return result["result"]
 
     @staticmethod
