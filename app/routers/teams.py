@@ -287,7 +287,7 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
                 url = config.USER_SERVICE_URL
                 resource = f"users/{uid}"
                 reqs_user.append(Services.get(url, resource, params, async_mode=True))
-            if reqs_user > 0:
+            if len(reqs_user) > 0:
                 users = Services.execute_many(reqs_user)
                 position_i["users_recommendation"] = users
             else:
