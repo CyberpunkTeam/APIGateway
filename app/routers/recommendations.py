@@ -104,6 +104,9 @@ async def create_team_recommendations(team_position: dict):
     params = {}
     uids = Services.post(url, resource, params, team_position)
 
+    members = team_position.get("team", {}).get("members", [])
+    uids = [uid for uid in uids if not (uid in members)]
+
     reqs = []
     for uid in uids:
         url = config.USER_SERVICE_URL
