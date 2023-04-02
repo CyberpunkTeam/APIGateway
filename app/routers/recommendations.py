@@ -93,3 +93,23 @@ async def create_team_recommendations(user: dict):
     )
 
     return results
+
+
+@router.post(
+    "/recommendations/teams_positions/", tags=["recommendations"], status_code=201
+)
+async def create_team_recommendations(team_position: dict):
+    url = config.RECOMMENDATION_SERVICE_URL
+    resource = "recommendations/teams_positions/"
+    params = {}
+    uids = Services.post(url, resource, params, team_position)
+
+    reqs = []
+    for uid in uids:
+        url = config.USER_SERVICE_URL
+        resource = f"users/{uid}"
+        reqs.append(Services.get(url, resource, params, async_mode=True))
+
+    results = Services.execute_many(reqs)
+
+    return results
