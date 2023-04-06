@@ -289,6 +289,16 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
                 reqs_user.append(Services.get(url, resource, params, async_mode=True))
             if len(reqs_user) > 0:
                 users = Services.execute_many(reqs_user)
+                for user in users:
+                    url = config.NOTIFICATION_SERVICE_URL
+                    resource = "notifications/"
+                    params = {
+                        "receiver_id": user.get("uid"),
+                        "sender_id": tid,
+                        "resource_id": position_i.get("tpid"),
+                    }
+                    resp = Services.get(url, resource, params)
+                    user["invitation_sent"] = len(resp) > 0
                 position_i["users_recommendation"] = users
             else:
                 position_i["users_recommendation"] = []
