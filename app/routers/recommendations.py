@@ -119,7 +119,7 @@ async def create_team_recommendations(team_position: dict):
 
 
 @router.post(
-    "/recommendations/temporal_team/", tags=["recommendations"], status_code=201
+    "/recommendations/temporal_teams/", tags=["recommendations"], status_code=201
 )
 async def create_team_recommendations(project: dict):
     url = config.RECOMMENDATION_SERVICE_URL
