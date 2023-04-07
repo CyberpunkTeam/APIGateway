@@ -133,6 +133,57 @@ async def create_team_recommendations(project: dict):
         resource = f"users/{uid}"
         reqs.append(Services.get(url, resource, params, async_mode=True))
 
-    results = Services.execute_many(reqs)
+    users = Services.execute_many(reqs)
 
-    return results
+    members_3 = users[:3]
+    skills_3 = get_team_skills(members_3)
+    team_3 = {
+        "name": f"Temporal team - Small - {project.get('name')}",
+        "members": members_3,
+        "skills": skills_3,
+    }
+
+    if len(users) < 3:
+        return [team_3]
+
+    members_5 = users[:5]
+    skills_5 = get_team_skills(members_5)
+    team_5 = {
+        "name": f"Temporal team - Large - {project.get('name')}",
+        "members": members_5,
+        "skills": skills_5,
+    }
+
+    return [team_3, team_5]
+
+
+def get_team_skills(users):
+    programming_language = set()
+    frameworks = set()
+    platforms = set()
+    databases = set()
+    for user in users:
+        user_skills = user.get("skills", {})
+
+        user_programming_language = user_skills.get("programming_language", [])
+        for programming_language_i in user_programming_language:
+            programming_language.add(programming_language_i)
+
+        user_frameworks = user_skills.get("frameworks", [])
+        for frameworks_i in user_frameworks:
+            frameworks.add(frameworks_i)
+
+        user_platforms = user_skills.get("platforms", [])
+        for platforms_i in user_platforms:
+            platforms.add(platforms_i)
+
+        user_databases = user_skills.get("databases", [])
+        for databases_i in user_databases:
+            databases.add(databases_i)
+
+    return {
+        "programming_language": list(programming_language),
+        "frameworks": list(frameworks),
+        "platforms": list(platforms),
+        "databases": list(databases),
+    }
