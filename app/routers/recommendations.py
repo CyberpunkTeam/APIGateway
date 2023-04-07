@@ -136,22 +136,24 @@ async def create_team_recommendations(project: dict):
     users = Services.execute_many(reqs)
 
     members_3 = users[:3]
-    members_5 = users[:5]
-
     skills_3 = get_team_skills(members_3)
-    skills_5 = get_team_skills(members_5)
-
     team_3 = {
         "name": f"Temporal team - Small - {project.get('name')}",
         "members": members_3,
         "skills": skills_3,
     }
 
+    if len(users) < 3:
+        return [team_3]
+
+    members_5 = users[:5]
+    skills_5 = get_team_skills(members_5)
     team_5 = {
         "name": f"Temporal team - Large - {project.get('name')}",
         "members": members_5,
         "skills": skills_5,
     }
+
     return [team_3, team_5]
 
 
