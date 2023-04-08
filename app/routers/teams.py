@@ -8,6 +8,7 @@ from app.models.requests.teams.position_states import PositionStates
 from app.models.requests.teams.team_position_update import TeamPositionUpdate
 from app.models.requests.teams.team_update import TeamUpdate
 from app.models.requests.teams.teams_positions import TeamsPositions
+from app.models.requests.teams.temporal_team import TemporalTeams
 from app.routers.notifications import (
     send_new_candidate_notification,
     send_position_postulation_accepted_notification,
@@ -383,3 +384,19 @@ async def accept_candidate(tid: str, tpid: str, uid: str):
     send_position_postulation_accepted_notification(tpid, uid)
 
     return new_members
+
+
+@router.post("/teams/temporal", tags=["teams"])
+async def create_temporal_team(temporal_team: TemporalTeams):
+    body = {
+        "name": temporal_team.name,
+        "project_preferences": [],
+        "members": [member.get("uid") for member in temporal_team.members],
+        "technologies": temporal_team.skills,
+        "temporal": True,
+    }
+    resource = "teams/"
+    params = {}
+    url = config.TEAM_SERVICE_URL
+
+    return Services.post(url, resource, params, body)
