@@ -242,7 +242,14 @@ async def create_team_position(team_position: TeamsPositions):
 
 
 @router.get("/teams_positions/", tags=["teams"], status_code=200)
-async def list_team_position(tid: str = None, state: PositionStates = None):
+async def list_team_position(
+    tid: str = None,
+    state: PositionStates = None,
+    programming_languages: str = None,
+    frameworks: str = None,
+    platforms: str = None,
+    databases: str = None,
+):
     url = config.TEAM_SERVICE_URL
     resource = "teams_positions/"
     params = {}
@@ -250,6 +257,14 @@ async def list_team_position(tid: str = None, state: PositionStates = None):
         params["tid"] = tid
     if state is not None:
         params["state"] = state
+    if programming_languages is not None:
+        params["programming_languages"] = programming_languages
+    if frameworks is not None:
+        params["frameworks"] = frameworks
+    if platforms is not None:
+        params["platforms"] = platforms
+    if databases is not None:
+        params["databases"] = databases
 
     positions = Services.get(url, resource, params)
 
