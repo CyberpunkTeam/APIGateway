@@ -393,6 +393,7 @@ async def create_temporal_team(temporal_team: TemporalTeams):
         "project_preferences": [],
         "members": [member.get("uid") for member in temporal_team.members],
         "technologies": temporal_team.skills,
+        "temporal": True,
     }
     resource = "teams/"
     params = {}
