@@ -122,6 +122,13 @@ async def create_team_recommendations(team_position: dict):
     "/recommendations/temporal_teams/", tags=["recommendations"], status_code=201
 )
 async def create_team_recommendations(project: dict):
+    resource = f"temporal_teams_registers/?pid={project.get('pid')}"
+    params = {}
+    url = config.TEAM_SERVICE_URL
+    result = Services.get(url, resource, params)
+    if len(result) > 0:
+        return []
+
     url = config.RECOMMENDATION_SERVICE_URL
     resource = "recommendations/temporal_team/"
     params = {}
