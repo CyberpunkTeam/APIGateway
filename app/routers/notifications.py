@@ -495,12 +495,10 @@ async def send_project_invitation_notification(position_invitation: PositionInvi
     return Services.post(url, resource, params, notification)
 
 
-async def send_new_temporal_team_notification(uids, team):
+def send_new_temporal_team_notification(uids, team):
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
     params = {}
-
-    reqs = []
 
     for uid in uids:
         notification = {
@@ -511,13 +509,10 @@ async def send_new_temporal_team_notification(uids, team):
             "resource_id": team.get("tid"),
             "metadata": {"team": team},
         }
-        req_i = Services.post(url, resource, params, notification, async_mode=True)
-        reqs.append(req_i)
-
-    Services.execute_many(reqs)
+        Services.post(url, resource, params, notification)
 
 
-async def send_invitation_to_projects(uids, pid, team):
+def send_invitation_to_projects(uids, pid, team):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
@@ -526,8 +521,6 @@ async def send_invitation_to_projects(uids, pid, team):
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
     params = {}
-
-    reqs = []
 
     for uid in uids:
         notification = {
@@ -538,7 +531,4 @@ async def send_invitation_to_projects(uids, pid, team):
             "resource_id": pid,
             "metadata": {"project": project, "team": team},
         }
-        req_i = Services.post(url, resource, params, notification, async_mode=True)
-        reqs.append(req_i)
-
-    Services.execute_many(reqs)
+        Services.post(url, resource, params, notification)
