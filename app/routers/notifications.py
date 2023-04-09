@@ -108,7 +108,7 @@ async def create_team_postulation_to_project(
     token_user = Authenticator.get_user_id(x_tiger_token.replace("Bearer ", ""))
     project_owner = project.get("creator_uid")
 
-    if team_owner != token_user:
+    if team_owner != token_user and team.get("temporal") != True:
         raise HTTPException(
             status_code=401,
             detail="Only team owner can postulate his team to a project",
