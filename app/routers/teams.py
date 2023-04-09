@@ -414,3 +414,15 @@ async def create_temporal_team(temporal_team: TemporalTeams):
     send_invitation_to_projects(body.get("members"), temporal_team.pid, team)
 
     return _get_team(team.get("tid"))
+
+
+@router.get("/temporal_teams/", tags=["recommendations"], status_code=200)
+async def create_team_recommendations(pid: str):
+    resource = f"temporal_teams_registers/?pid={pid}"
+    params = {}
+    url = config.TEAM_SERVICE_URL
+    result = Services.get(url, resource, params)
+    if len(result) > 0:
+        return list(map(lambda result_i: _get_team(result_i.get("tid")), result))
+
+    return result
