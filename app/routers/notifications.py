@@ -495,7 +495,7 @@ async def send_project_invitation_notification(position_invitation: PositionInvi
     return Services.post(url, resource, params, notification)
 
 
-def send_new_temporal_team_notification(uids, team):
+async def send_new_temporal_team_notification(uids, team):
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
     params = {}
@@ -517,7 +517,7 @@ def send_new_temporal_team_notification(uids, team):
     Services.execute_many(reqs)
 
 
-def send_invitation_to_projects(uids, pid, team):
+async def send_invitation_to_projects(uids, pid, team):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
