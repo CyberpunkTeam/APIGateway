@@ -6,7 +6,10 @@ from app.models.currency import Currency
 from app.models.project_states import ProjectStates
 from app.models.requests.projects.project_update import ProjectsUpdate
 from app.models.requests.teams.team_invitations_update import States
-from app.routers.recommendations import _get_team_recommendations
+from app.routers.recommendations import (
+    _get_team_recommendations,
+    _create_temporal_team_recommendations,
+)
 from app.services import Services
 from app.utils.authenticator import Authenticator
 
@@ -21,6 +24,8 @@ async def create_project(body: dict):
     project = Services.post(url, resource, params, body)
     teams_recommendations = _get_team_recommendations(project, new_project=True)
     project["teams_recommendations"] = teams_recommendations
+    temporal_team_recommendations = _create_temporal_team_recommendations(project)
+    project["temporal_teams_recommendations"] = temporal_team_recommendations
     return project
 
 
