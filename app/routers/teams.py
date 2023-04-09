@@ -404,6 +404,12 @@ async def create_temporal_team(temporal_team: TemporalTeams):
 
     team = Services.post(url, resource, params, body)
 
+    resource = "temporal_teams_registers/"
+    params = {}
+    url = config.TEAM_SERVICE_URL
+    body_register = {"pid": temporal_team.pid, "tid": team.get("tid")}
+    Services.post(url, resource, params, body_register)
+
     send_new_temporal_team_notification(body.get("members"), team)
     send_invitation_to_projects(body.get("members"), temporal_team.pid, team)
 
