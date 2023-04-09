@@ -416,7 +416,7 @@ async def create_temporal_team(temporal_team: TemporalTeams):
     return _get_team(team.get("tid"))
 
 
-@router.get("/temporal_teams/", tags=["recommendations"], status_code=200)
+@router.get("/teams/temporal/", tags=["recommendations"], status_code=200)
 async def create_team_recommendations(pid: str):
     resource = f"temporal_teams_registers/?pid={pid}"
     params = {}
