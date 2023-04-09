@@ -395,7 +395,7 @@ async def create_temporal_team(temporal_team: TemporalTeams):
         "technologies": temporal_team.skills,
         "temporal": True,
     }
-    print(f"body temporal team: {body}")
+
     resource = "teams/"
     params = {}
     url = config.TEAM_SERVICE_URL
