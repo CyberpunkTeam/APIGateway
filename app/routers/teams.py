@@ -13,6 +13,8 @@ from app.routers.notifications import (
     send_new_candidate_notification,
     send_position_postulation_accepted_notification,
     send_team_review_notification,
+    send_new_temporal_team_notification,
+    send_invitation_to_projects,
 )
 from app.services import Services
 from app.utils.authenticator import Authenticator
@@ -400,4 +402,9 @@ async def create_temporal_team(temporal_team: TemporalTeams):
     params = {}
     url = config.TEAM_SERVICE_URL
 
-    return Services.post(url, resource, params, body)
+    team = Services.post(url, resource, params, body)
+
+    send_new_temporal_team_notification(body.get("members"), team)
+    send_invitation_to_projects(body.get("members"), temporal_team.pid, team)
+
+    return _get_team(team.get("tid"))
