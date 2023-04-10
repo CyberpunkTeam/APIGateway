@@ -163,19 +163,33 @@ async def create_team_postulation_response(body: TeamPostulationResponse):
 
     project, team = Services.execute_many([req_project, req_team])
 
-    notification = {
-        "sender_id": response.get("project_owner_uid"),
-        "receiver_id": team.get("owner"),
-        "notification_type": "TEAM_POSTULATION_RESPONSE",
-        "resource": "TEAM_POSTULATIONS",
-        "resource_id": response.get("ppid"),
-        "metadata": {"response": body.state, "project": project},
-    }
     url = config.NOTIFICATION_SERVICE_URL
     resource = "notifications/"
     params = {}
 
-    return Services.post(url, resource, params, notification)
+    if team.get("temporal"):
+        for uid in team.get("members", []):
+            notification = {
+                "sender_id": response.get("project_owner_uid"),
+                "receiver_id": uid,
+                "notification_type": "TEAM_POSTULATION_RESPONSE",
+                "resource": "TEAM_POSTULATIONS",
+                "resource_id": response.get("ppid"),
+                "metadata": {"response": body.state, "project": project},
+            }
+            Services.post(url, resource, params, notification)
+        return {"message": "OK"}
+    else:
+        notification = {
+            "sender_id": response.get("project_owner_uid"),
+            "receiver_id": team.get("owner"),
+            "notification_type": "TEAM_POSTULATION_RESPONSE",
+            "resource": "TEAM_POSTULATIONS",
+            "resource_id": response.get("ppid"),
+            "metadata": {"response": body.state, "project": project},
+        }
+
+        return Services.post(url, resource, params, notification)
 
 
 @router.post(
