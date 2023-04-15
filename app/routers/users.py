@@ -59,3 +59,11 @@ async def add_follower(uid: str, follower_uid: str):
     resource = f"/users/{uid}/followers/{follower_uid}"
     params = {}
     return Services.post(url, resource, params)
+
+
+@router.post("/users/teams/{follower_uid}/following/{tid}", tags=["users"])
+async def add_follower(tid: str, follower_uid: str):
+    url = config.USER_SERVICE_URL
+    resource = f"/users/teams/{tid}/followers/{follower_uid}"
+    params = {}
+    return Services.post(url, resource, params)
