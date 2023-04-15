@@ -7,6 +7,12 @@ from app.models.requests.notifications.notification_update import NotificationUp
 from app.models.requests.notifications.position_invitation import PositionInvitation
 from app.models.requests.notifications.project_invitation import ProjectInvitation
 from app.models.requests.notifications.team_invitation import TeamInvitation
+from app.models.requests.notifications.team_member_internal_recommendations import (
+    TeamMemberInternalRecommendations,
+)
+from app.models.requests.notifications.team_project_internal_recommendations import (
+    TeamProjectInternalRecommendations,
+)
 from app.models.requests.projects.project_abandonment import ProjectAbandonment
 from app.models.requests.projects.project_abandons_request import (
     ProjectAbandonsRequests,
@@ -546,3 +552,103 @@ def send_invitation_to_projects(uids, pid, team):
             "metadata": {"project": project, "team": team},
         }
         Services.post(url, resource, params, notification)
+
+
+@router.post(
+    "/notifications/teams_project_internal_recommendations/",
+    tags=["notifications"],
+    status_code=201,
+)
+async def send_project_recommendation_notification(
+    project_recommendation: TeamProjectInternalRecommendations,
+):
+    sender_id = project_recommendation.sender_id
+    receiver_id = project_recommendation.receiver_id
+    tid = project_recommendation.tid
+    pid = project_recommendation.pid_recommendation
+
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{pid}"
+    params = {}
+    project_req = Services.get(url, resource, params, async_mode=True)
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    req_team = Services.get(url, resource, params, async_mode=True)
+
+    url = config.USER_SERVICE_URL
+    resource = f"users/{sender_id}"
+    params = {}
+    sender_req = Services.get(url, resource, params, async_mode=True)
+
+    project, team, sender = Services.execute_many([project_req, req_team, sender_req])
+
+    notification = {
+        "sender_id": sender_id,
+        "receiver_id": receiver_id,
+        "notification_type": "TEAM_PROJECT_INTERNAL_RECOMMENDATION",
+        "resource": "PROJECTS",
+        "resource_id": pid,
+        "metadata": {
+            "team": team,
+            "member": {"name": sender.get("name") + " " + sender.get("lastname")},
+            "project": project,
+        },
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
+
+
+@router.post(
+    "/notifications/teams_member_internal_recommendations/",
+    tags=["notifications"],
+    status_code=201,
+)
+async def send_project_recommendation_notification(
+    project_recommendation: TeamMemberInternalRecommendations,
+):
+    sender_id = project_recommendation.sender_id
+    receiver_id = project_recommendation.receiver_id
+    tid = project_recommendation.tid
+    uid = project_recommendation.uid_recommendation
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    req_team = Services.get(url, resource, params, async_mode=True)
+
+    url = config.USER_SERVICE_URL
+    resource = f"users/{sender_id}"
+    params = {}
+    sender_req = Services.get(url, resource, params, async_mode=True)
+
+    url = config.USER_SERVICE_URL
+    resource = f"users/{uid}"
+    params = {}
+    user_req = Services.get(url, resource, params, async_mode=True)
+
+    team, sender, user = Services.execute_many([req_team, sender_req, user_req])
+
+    notification = {
+        "sender_id": sender_id,
+        "receiver_id": receiver_id,
+        "notification_type": "TEAM_MEMBER_INTERNAL_RECOMMENDATION",
+        "resource": "USERS",
+        "resource_id": uid,
+        "metadata": {
+            "team": team,
+            "member": {"name": sender.get("name") + " " + sender.get("lastname")},
+            "user": {"name": user.get("name") + " " + user.get("lastname")},
+        },
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    return Services.post(url, resource, params, notification)
