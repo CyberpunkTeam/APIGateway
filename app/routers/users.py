@@ -53,7 +53,7 @@ async def put_user(
     return Services.put(url, resource, params, user_update.to_json())
 
 
-@router.post("/users/{uid}/followers/{follower_uid}", tags=["users"])
+@router.post("/users/{follower_uid}/following/{uid}", tags=["users"])
 async def add_follower(uid: str, follower_uid: str):
     url = config.USER_SERVICE_URL
     resource = f"/users/{uid}/followers/{follower_uid}"
