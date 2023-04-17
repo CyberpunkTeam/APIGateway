@@ -490,7 +490,9 @@ async def send_project_invitation_notification(project_invitation: ProjectInvita
     tags=["notifications"],
     status_code=201,
 )
-async def send_project_invitation_notification(position_invitation: PositionInvitation):
+async def send_team_position_invitation_notification(
+    position_invitation: PositionInvitation,
+):
     uid = position_invitation.uid
     tpid = position_invitation.tpid
 
@@ -559,7 +561,7 @@ def send_invitation_to_projects(uids, pid, team):
     tags=["notifications"],
     status_code=201,
 )
-async def send_project_recommendation_notification(
+async def send_project_internal_recommendation_notification(
     project_recommendation: TeamProjectInternalRecommendations,
 ):
     sender_id = project_recommendation.sender_id
@@ -609,7 +611,7 @@ async def send_project_recommendation_notification(
     tags=["notifications"],
     status_code=201,
 )
-async def send_project_recommendation_notification(
+async def send_member_internal_recommendation_notification(
     project_recommendation: TeamMemberInternalRecommendations,
 ):
     sender_id = project_recommendation.sender_id
