@@ -10,3 +10,4 @@ PROJECT_SERVICE_URL = os.environ.get("PROJECT_SERVICE_URL", "http://test.com/")
 RECOMMENDATION_SERVICE_URL = os.environ.get(
     "RECOMMENDATION_SERVICE_URL", "http://test.com/"
 )
+CONTENT_SERVICE_URL = os.environ.get("CONTENT_SERVICE_URL", "http://test.com/")
