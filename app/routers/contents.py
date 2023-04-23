@@ -23,15 +23,6 @@ async def get_contents(author_uid: str = None, tid: str = None):
     if tid is not None:
         params["tid"] = tid
 
-    return Services.get(url, resource, params)
-
-
-@router.get("/contents/{cid}", tags=["contents"], status_code=200)
-async def get_contents(cid: str = None):
-    url = config.CONTENT_SERVICE_URL
-    resource = f"contents/{cid}"
-    params = {}
-
     contents = Services.get(url, resource, params)
 
     reqs = []
@@ -70,3 +61,29 @@ async def get_contents(cid: str = None):
         content["team"] = team
 
     return team_contents + users_contents
+
+
+@router.get("/contents/{cid}", tags=["contents"], status_code=200)
+async def get_contents(cid: str = None):
+    url = config.CONTENT_SERVICE_URL
+    resource = f"contents/{cid}"
+    params = {}
+
+    content = Services.get(url, resource, params)
+
+    uid = content.get("author_uid")
+    url = config.USER_SERVICE_URL
+    resource = f"users/{uid}"
+    params = {}
+    user = Services.get(url, resource, params)
+
+    content["author"] = user
+
+    if content.get("tid") is not None:
+        url = config.TEAM_SERVICE_URL
+        resource = f"teams/{content.get('tid')}"
+        params = {}
+        team = Services.get(url, resource, params)
+        content["team"] = team
+
+    return content
