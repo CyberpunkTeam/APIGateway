@@ -83,7 +83,7 @@ async def delete_content(cid: str):
     return Services.delete(url, resource, params)
 
 
-@router.delete("/contents/{cid}", tags=["contents"])
+@router.put("/contents/{cid}", tags=["contents"])
 async def put_content(cid: str, content_update: ContentsUpdate):
     url = config.CONTENT_SERVICE_URL
     resource = f"contents/{cid}"
