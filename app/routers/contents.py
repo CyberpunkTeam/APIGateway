@@ -1,4 +1,6 @@
 from fastapi import APIRouter
+
+from app.models.requests.contents.content_update import ContentsUpdate
 from app.services import Services
 from app import config
 
@@ -70,7 +72,27 @@ async def get_contents(cid: str = None):
     params = {}
 
     content = Services.get(url, resource, params)
+    return _complete_content(content)
 
+
+@router.delete("/contents/{cid}", tags=["contents"])
+async def delete_content(cid: str):
+    url = config.CONTENT_SERVICE_URL
+    resource = f"contents/{cid}"
+    params = {}
+    return Services.delete(url, resource, params)
+
+
+@router.delete("/contents/{cid}", tags=["contents"])
+async def put_content(cid: str, content_update: ContentsUpdate):
+    url = config.CONTENT_SERVICE_URL
+    resource = f"contents/{cid}"
+    params = {}
+    content = Services.put(url, resource, params, content_update.to_json())
+    return _complete_content(content)
+
+
+def _complete_content(content):
     uid = content.get("author_uid")
     url = config.USER_SERVICE_URL
     resource = f"users/{uid}"
