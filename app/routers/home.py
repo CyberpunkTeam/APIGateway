@@ -48,7 +48,8 @@ async def get_home(uid: str):
         content_result += content
 
     results = [
-        _create_home_content("content", content, users_dict) for content in contents
+        _create_home_content("content", content, users_dict)
+        for content in content_result
     ]
 
     return results
