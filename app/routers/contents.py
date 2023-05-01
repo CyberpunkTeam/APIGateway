@@ -109,3 +109,19 @@ def _complete_content(content):
         content["team"] = team
 
     return content
+
+
+@router.delete("/contents/{cid}/likes/{uid}", tags=["contents"])
+async def delete_like_to_content(cid: str, uid: str):
+    url = config.CONTENT_SERVICE_URL
+    resource = f"contents/{cid}/likes/{uid}"
+    params = {}
+    return Services.delete(url, resource, params)
+
+
+@router.post("/contents/{cid}/likes/{uid}", tags=["contents"])
+async def add_like_to_content(cid: str, uid: str):
+    url = config.CONTENT_SERVICE_URL
+    resource = f"contents/{cid}/likes/{uid}"
+    params = {}
+    return Services.post(url, resource, params)
