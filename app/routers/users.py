@@ -54,16 +54,74 @@ async def put_user(
 
 
 @router.post("/users/{follower_uid}/following/{uid}", tags=["users"])
-async def add_follower(uid: str, follower_uid: str):
+async def add_follower_to_user(uid: str, follower_uid: str):
     url = config.USER_SERVICE_URL
     resource = f"/users/{uid}/followers/{follower_uid}"
     params = {}
-    return Services.post(url, resource, params)
+    result = Services.post(url, resource, params)
+
+    url = config.USER_SERVICE_URL
+    resource = f"users/{follower_uid}"
+    params = {}
+    user = Services.get(url, resource, params)
+
+    notification = {
+        "sender_id": follower_uid,
+        "receiver_id": uid,
+        "notification_type": "NEW_FOLLOWER",
+        "resource": "USERS",
+        "resource_id": follower_uid,
+        "metadata": {
+            "follower_name": f"{user['name']} {user['lastname']}",
+            "following_tyoe": "user",
+        },
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return result
 
 
 @router.post("/users/teams/{follower_uid}/following/{tid}", tags=["users"])
-async def add_follower(tid: str, follower_uid: str):
+async def add_follower_to_team(tid: str, follower_uid: str):
     url = config.USER_SERVICE_URL
     resource = f"/users/teams/{tid}/followers/{follower_uid}"
     params = {}
-    return Services.post(url, resource, params)
+    result = Services.post(url, resource, params)
+
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+    team_req = Services.get(url, resource, params, async_mode=True)
+
+    url = config.USER_SERVICE_URL
+    resource = f"users/{follower_uid}"
+    params = {}
+    user_req = Services.get(url, resource, params, async_mode=True)
+
+    team, user = Services.execute_many([team_req, user_req])
+
+    notification = {
+        "sender_id": follower_uid,
+        "receiver_id": team.get("owner"),
+        "notification_type": "NEW_FOLLOWER",
+        "resource": "USERS",
+        "resource_id": follower_uid,
+        "metadata": {
+            "follower_name": f"{user['name']} {user['lastname']}",
+            "following_tyoe": "team",
+            "following_team_name": team.get("name"),
+        },
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return result
