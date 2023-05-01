@@ -29,4 +29,4 @@ async def get_home(uid: str):
     if len(reqs_content) > 0:
         contents = Services.execute_many(reqs_content)
 
-    return sorted(contents, key=lambda content: content["created_date"])
+    return contents
