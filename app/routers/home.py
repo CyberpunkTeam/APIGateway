@@ -29,6 +29,6 @@ async def get_home(uid: str):
     if len(reqs_content) > 0:
         contents = Services.execute_many(reqs_content)
 
-    contents = filter(lambda ele: len(ele) > 0, contents)
+    contents = list(filter(lambda ele: len(ele) > 0, contents))
 
     return contents
