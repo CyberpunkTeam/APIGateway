@@ -113,7 +113,7 @@ async def add_follower_to_team(tid: str, follower_uid: str):
         "resource_id": follower_uid,
         "metadata": {
             "follower_name": f"{user['name']} {user['lastname']}",
-            "following_tyoe": "team",
+            "following_type": "team",
             "following_team_name": team.get("name"),
         },
     }
