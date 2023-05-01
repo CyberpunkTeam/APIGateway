@@ -15,18 +15,17 @@ async def get_home(uid: str):
     following = user["following"]
     uids = following["users"]
     tids = following["teams"]
-
+    contents = []
     reqs_content = []
     for uid_following in uids:
         url = config.CONTENT_SERVICE_URL
         resource = "contents/"
         params = {}
         params["author_uid"] = uid_following
-        reqs = Services.get(url, resource, params, async_mode=True)
-        reqs_content.append(reqs)
+        reqs = Services.get(url, resource, params)
+        contents.append(reqs)
 
-    contents = []
-    if len(reqs_content) > 0:
-        contents = Services.execute_many(reqs_content)
+    # if len(reqs_content) > 0:
+    #    contents = Services.execute_many(reqs_content)
 
     return contents
