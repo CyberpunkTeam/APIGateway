@@ -43,11 +43,11 @@ async def get_home(uid: str):
 
     contents = list(filter(lambda ele: len(ele) > 0, contents))
 
-    results = [
-        _create_home_content("content", content, users_dict) for content in contents
-    ]
+    # results = [
+    #    _create_home_content("content", content, users_dict) for content in contents
+    # ]
 
-    return results
+    return contents
 
 
 def _create_home_content(content_type, content, users_dict):
