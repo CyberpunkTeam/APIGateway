@@ -25,7 +25,7 @@ async def get_home(uid: str):
 
     results = users_contents + teams_contents
 
-    results = _order_contents_home(results)
+    _order_contents_home(results)
 
     return results
 
