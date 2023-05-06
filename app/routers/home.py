@@ -23,7 +23,9 @@ async def get_home(uid: str):
 
     teams_contents = _get_content(tids=tids, dict_source=teams_dict)
 
-    results = users_contents + teams_contents
+    new_projects = _get_new_projects(uids, users_dict)
+
+    results = users_contents + teams_contents + new_projects
 
     _order_contents_home(results)
 
@@ -52,6 +54,9 @@ def _get_content_created_date(content_type, content):
     if content_type == "content_by_team":
         return content.get("created_date")
 
+    if content_type == "new_project":
+        return content.get("created_date")
+
 
 def _get_content_creator(content_type, content, dict_source):
     if content_type == "content_by_user":
@@ -63,6 +68,11 @@ def _get_content_creator(content_type, content, dict_source):
         tid = content.get("tid")
 
         return dict_source.get(tid)
+
+    if content_type == "new_project":
+        uid = content.get("creator_uid")
+
+        return dict_source.get(uid)
 
 
 def _get_users(uids):
@@ -117,3 +127,28 @@ def _get_content(uids=None, tids=None, dict_source=None):
         for content in content_result
     ]
     return results_contents_by_users
+
+
+def _get_new_projects(uids, user_dict):
+    projects = []
+    reqs_project = []
+    for uid in uids:
+        url = config.PROJECT_SERVICE_URL
+        resource = "projects/"
+        params = {"creator_uid": uid}
+        reqs = Services.get(url, resource, params, async_mode=True)
+        reqs_project.append(reqs)
+
+    if len(reqs_project) > 0:
+        projects = Services.execute_many(reqs_project)
+
+    projects = list(filter(lambda ele: len(ele) > 0, projects))
+    projects_result = []
+    for project in projects:
+        projects_result += project
+
+    projects_result = [
+        _create_home_content("new_project", project, user_dict)
+        for project in projects_result
+    ]
+    return projects_result
