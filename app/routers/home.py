@@ -35,7 +35,19 @@ async def get_home(uid: str):
 
 
 def _order_contents_home(contents):
-    return contents.sort(key=lambda x: x["created_date"], reverse=True)
+    return contents.sort(
+        key=lambda x: _get_date_to_compare(x["created_date"]), reverse=True
+    )
+
+
+def _get_date_to_compare(date):
+    datetime_list = date.split(":")
+    times = ":".join(datetime_list[1:])
+    date_list = datetime_list[0].split("-")
+    day = date_list[0]
+    month = date_list[1]
+    year = date_list[2]
+    return f"{year}-{month}-{day}:{times}"
 
 
 def _create_home_content(content_type, content, users_dict):
