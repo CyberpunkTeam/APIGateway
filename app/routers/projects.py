@@ -80,7 +80,24 @@ async def list_projects(
         params["frameworks"] = frameworks
 
     projects = Services.get(url, resource, params)
-    return list(map(add_creator, projects))
+
+    reqs = []
+    for project in projects:
+        url = config.USER_SERVICE_URL
+        resource = f"users/{project.get('creator_uid')}"
+        params = {}
+        creator_req = Services.get(url, resource, params, async_mode=True)
+        reqs.append(creator_req)
+
+    creators = Services.execute_many(reqs)
+
+    for i in range(len(projects)):
+        project = projects[i]
+        creator = creators[i]
+        del project["creator_uid"]
+        project["creator"] = creator
+
+    return projects
 
 
 @router.get("/projects/{pid}", tags=["projects"])
