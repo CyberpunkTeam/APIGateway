@@ -81,19 +81,22 @@ async def list_projects(
 
     projects = Services.get(url, resource, params)
 
+    creators_uid = {project.get("creator_uid") for project in projects}
+
     reqs = []
-    for project in projects:
+    for uid in creators_uid:
         url = config.USER_SERVICE_URL
-        resource = f"users/{project.get('creator_uid')}"
+        resource = f"users/{uid}"
         params = {}
         creator_req = Services.get(url, resource, params, async_mode=True)
         reqs.append(creator_req)
 
     creators = Services.execute_many(reqs)
+    creators_dicts = {creator.get("uid"): creator for creator in creators}
 
-    for i in range(len(projects)):
-        project = projects[i]
-        creator = creators[i]
+    for project in projects:
+        creator_uid = project.get("creator_uid")
+        creator = creators_dicts.get(creator_uid)
         del project["creator_uid"]
         project["creator"] = creator
 
