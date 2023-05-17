@@ -20,10 +20,15 @@ async def search(word: str):
     resource = f"teams/"
     req_teams = Services.get(url, resource, params, async_mode=True)
 
-    users, teams = Services.execute_many([req_users, req_teams])
+    url = config.CONTENT_SERVICE_URL
+    resource = f"contents/"
+    req_contents = Services.get(url, resource, params, async_mode=True)
+
+    users, teams, contents = Services.execute_many([req_users, req_teams, req_contents])
 
     result["teams"] = teams
     result["users"] = users
+    result["contents"] = contents
     return result
 
 
