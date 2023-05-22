@@ -32,15 +32,19 @@ async def get_profile(user_id: str):
     following_teams = following.get("teams", [])
 
     users = set(followers + following_users)
-
-    reqs = []
-    for user_id_i in users:
-        url = config.USER_SERVICE_URL
-        resource = f"users/{user_id_i}"
-        params = {}
-        req_user_data = Services.get(url, resource, params, async_mode=True)
-        reqs.append(req_user_data)
-    users = Services.execute_many(reqs)
+    uids = list(users)
+    url = config.USER_SERVICE_URL
+    params = {"uids": uids}
+    resource = f"users/"
+    users = Services.get(url, resource, params)
+    # reqs = []
+    # for user_id_i in users:
+    #     url = config.USER_SERVICE_URL
+    #     resource = f"users/{user_id_i}"
+    #     params = {}
+    #     req_user_data = Services.get(url, resource, params, async_mode=True)
+    #     reqs.append(req_user_data)
+    # users = Services.execute_many(reqs)
     followers_info = [user for user in users if user.get("uid") in followers]
     following_users_info = [
         user for user in users if user.get("uid") in following_users
