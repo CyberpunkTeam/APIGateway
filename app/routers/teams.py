@@ -31,7 +31,7 @@ async def create_team(body: dict):
 
 
 @router.get("/teams/", tags=["teams"], status_code=200)
-async def get_teams(owner: str = None, mid: str = None):
+async def get_teams(owner: str = None, mid: str = None, tids: str = None):
     url = config.TEAM_SERVICE_URL
     resource = "teams/"
     params = {}
@@ -40,6 +40,9 @@ async def get_teams(owner: str = None, mid: str = None):
 
     if mid is not None:
         params["mid"] = mid
+
+    if tids is not None:
+        params["tids"] = tids
 
     teams = Services.get(url, resource, params)
 
