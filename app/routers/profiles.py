@@ -47,15 +47,14 @@ async def get_profile(user_id: str):
         user for user in users if user.get("uid") in following_users
     ]
 
-    reqs = []
-    for team_i in following_teams:
+    if len(following_teams) > 0:
         url = config.TEAM_SERVICE_URL
-        resource = f"teams/{team_i}"
-        params = {}
-        req_team_data = Services.get(url, resource, params, async_mode=True)
-        reqs.append(req_team_data)
-
-    teams = Services.execute_many(reqs)
+        tids = "[" + ",".join(following_teams) + "]"
+        params = {"tids": tids}
+        resource = f"teams/"
+        teams = Services.get(url, resource, params)
+    else:
+        teams = []
 
     user_data["followers_info"] = followers_info
     user_data["following_info"] = {"users": following_users_info, "teams": teams}
