@@ -52,6 +52,7 @@ async def get_profile(user_id: str):
         tids = "[" + ",".join(following_teams) + "]"
         params = {"tids": tids}
         resource = f"teams/"
+        print("TEAMS TO GET: ", tids)
         teams = Services.get(url, resource, params)
     else:
         teams = []
