@@ -98,27 +98,27 @@ def _get_content_creator(content_type, content, dict_source):
 
 
 def _get_users(uids):
-    reqs = []
-    for uid in uids:
+    if len(uids) > 0:
+        uids = "[" + ",".join(uids) + "]"
         url = config.USER_SERVICE_URL
-        resource = f"users/{uid}"
-        params = {}
-        req = Services.get(url, resource, params, async_mode=True)
-        reqs.append(req)
-    users = Services.execute_many(reqs)
+        params = {"uids": uids}
+        resource = "users/"
+        users = Services.get(url, resource, params)
+    else:
+        users = []
 
     return {user.get("uid"): user for user in users}
 
 
 def _get_teams(tids):
-    reqs = []
-    for tid in tids:
+    if len(tids) > 0:
         url = config.TEAM_SERVICE_URL
-        resource = f"teams/{tid}"
-        params = {}
-        req = Services.get(url, resource, params, async_mode=True)
-        reqs.append(req)
-    teams = Services.execute_many(reqs)
+        tids = "[" + ",".join(tids) + "]"
+        params = {"tids": tids}
+        resource = f"teams/"
+        teams = Services.get(url, resource, params)
+    else:
+        teams = []
 
     return {team.get("tid"): team for team in teams}
 
