@@ -345,7 +345,7 @@ async def block_project(pid: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
-    project_update = ProjectsUpdate(state="BLOCKED")
+    project_update = ProjectsUpdate(state=States.BLOCKED)
     return Services.put(url, resource, params, project_update.to_json())
 
 
@@ -354,5 +354,5 @@ async def unblock_project(pid: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
-    project_update = ProjectsUpdate(state="PENDING")
+    project_update = ProjectsUpdate(state=States.PENDING)
     return Services.put(url, resource, params, project_update.to_json())

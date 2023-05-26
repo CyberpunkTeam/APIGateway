@@ -8,6 +8,7 @@ class States(str, Enum):
     ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
     PENDING = "PENDING"
+    BLOCKED = "BLOCKED"
 
 
 class TeamInvitationUpdate(BaseModel):
