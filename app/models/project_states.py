@@ -6,3 +6,4 @@ class ProjectStates(str, Enum):
     FINISHED = "FINISHED"
     PENDING = "PENDING"
     WIP = "WIP"
+    BLOCKED = "BLOCKED"

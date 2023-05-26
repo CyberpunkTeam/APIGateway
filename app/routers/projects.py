@@ -338,3 +338,12 @@ async def get_project_review(pid: str = None, tid: str = None):
     if tid is not None:
         params["tid"] = tid
     return Services.get(url, resource, params)
+
+
+@router.post("/projects/{pid}/blocked", tags=["projects"], status_code=200)
+async def block_project(pid: str):
+    url = config.PROJECT_SERVICE_URL
+    resource = f"projects/{pid}"
+    params = {}
+    project_update = ProjectsUpdate(state="BLOCKED")
+    return Services.post(url, resource, params, project_update.to_json())
