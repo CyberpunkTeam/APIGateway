@@ -17,6 +17,7 @@ class UserUpdate(BaseModel):
     work_experience: Optional[List[WorkExperience]] = []
     skills: Optional[Skills]
     idioms: Optional[List[str]]
+    temporal_team: Optional[bool]
 
     def to_json(self):
         return loads(self.json(exclude_defaults=True))
