@@ -132,7 +132,7 @@ async def add_like_to_content(cid: str, uid: str):
 @router.post("contents/{cid}/blocked", tags=["contents"])
 async def block_content(cid: str):
     url = config.CONTENT_SERVICE_URL
-    resource = f"contents/{cid}/blocked"
+    resource = f"contents/{cid}"
     params = {}
     content_update = ContentsUpdate(state="BLOCKED")
     return Services.put(url, resource, params, content_update.to_json())
