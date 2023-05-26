@@ -350,7 +350,7 @@ async def block_project(pid: str):
 
 
 @router.post("/projects/{pid}/unblocked", tags=["projects"], status_code=200)
-async def block_project(pid: str):
+async def unblock_project(pid: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
