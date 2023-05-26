@@ -11,6 +11,7 @@ class ContentsUpdate(BaseModel):
     href: Optional[str]
     updated_date: Optional[str]
     cover_image: Optional[str]
+    state: Optional[str]
 
     def to_json(self):
         return loads(self.json(exclude_defaults=True))

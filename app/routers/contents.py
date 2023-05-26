@@ -16,7 +16,7 @@ async def create_content(body: dict):
 
 
 @router.get("/contents/", tags=["contents"], status_code=200)
-async def get_contents(author_uid: str = None, tid: str = None):
+async def get_contents(author_uid: str = None, tid: str = None, state: str = None):
     url = config.CONTENT_SERVICE_URL
     resource = "contents/"
     params = {}
@@ -24,6 +24,8 @@ async def get_contents(author_uid: str = None, tid: str = None):
         params["author_uid"] = author_uid
     if tid is not None:
         params["tid"] = tid
+    if state is not None:
+        params["state"] = state
 
     contents = Services.get(url, resource, params)
 
@@ -125,3 +127,12 @@ async def add_like_to_content(cid: str, uid: str):
     resource = f"contents/{cid}/likes/{uid}"
     params = {}
     return Services.post(url, resource, params)
+
+
+@router.post("contents/{cid}/blocked", tags=["contents"])
+async def block_content(cid: str):
+    url = config.CONTENT_SERVICE_URL
+    resource = f"contents/{cid}/blocked"
+    params = {}
+    content_update = ContentsUpdate(state="BLOCKED")
+    return Services.put(url, resource, params, content_update.to_json())
