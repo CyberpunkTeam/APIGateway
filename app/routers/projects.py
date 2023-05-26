@@ -346,13 +346,13 @@ async def block_project(pid: str):
     resource = f"projects/{pid}"
     params = {}
     project_update = ProjectsUpdate(state="BLOCKED")
-    return Services.post(url, resource, params, project_update.to_json())
+    return Services.put(url, resource, params, project_update.to_json())
 
 
 @router.post("/projects/{pid}/unblocked", tags=["projects"], status_code=200)
-async def block_project(pid: str):
+async def unblock_project(pid: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
-    project_update = ProjectsUpdate(state="ACTIVE")
-    return Services.post(url, resource, params, project_update.to_json())
+    project_update = ProjectsUpdate(state="PENDING")
+    return Services.put(url, resource, params, project_update.to_json())

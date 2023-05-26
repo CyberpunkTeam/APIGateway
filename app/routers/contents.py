@@ -136,3 +136,12 @@ async def block_content(cid: str):
     params = {}
     content_update = ContentsUpdate(state="BLOCKED")
     return Services.put(url, resource, params, content_update.to_json())
+
+
+@router.post("/contents/{cid}/unblocked", tags=["contents"])
+async def block_uncontent(cid: str):
+    url = config.CONTENT_SERVICE_URL
+    resource = f"contents/{cid}"
+    params = {}
+    content_update = ContentsUpdate(state="ACTIVE")
+    return Services.put(url, resource, params, content_update.to_json())
