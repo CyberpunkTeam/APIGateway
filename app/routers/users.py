@@ -2,6 +2,7 @@ from typing import Union
 
 from fastapi import APIRouter, Header, HTTPException
 from app import config
+from app.models.requests.states import States
 from app.models.requests.users.user_update import UserUpdate
 from app.services import Services
 from app.utils.authenticator import Authenticator
@@ -125,3 +126,21 @@ async def add_follower_to_team(tid: str, follower_uid: str):
     Services.post(url, resource, params, notification)
 
     return result
+
+
+@router.post("/users/{user_id}/blocked", tags=["users"])
+async def add_blocked_user(user_id: str):
+    url = config.USER_SERVICE_URL
+    resource = f"users/{user_id}"
+    params = {}
+    user_update = UserUpdate(state=States.BLOCKED)
+    return Services.put(url, resource, params, user_update.to_json())
+
+
+@router.post("/users/{user_id}/blocked", tags=["users"])
+async def add_unblocked_user(user_id: str):
+    url = config.USER_SERVICE_URL
+    resource = f"users/{user_id}"
+    params = {}
+    user_update = UserUpdate(state=States.ACTIVE)
+    return Services.put(url, resource, params, user_update.to_json())

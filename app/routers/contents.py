@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.models.requests.contents.content_update import ContentsUpdate
+from app.models.requests.states import States
 from app.services import Services
 from app import config
 
@@ -134,14 +135,14 @@ async def block_content(cid: str):
     url = config.CONTENT_SERVICE_URL
     resource = f"contents/{cid}"
     params = {}
-    content_update = ContentsUpdate(state="BLOCKED")
+    content_update = ContentsUpdate(state=States.BLOCKED)
     return Services.put(url, resource, params, content_update.to_json())
 
 
 @router.post("/contents/{cid}/unblocked", tags=["contents"])
-async def block_uncontent(cid: str):
+async def unblock_content(cid: str):
     url = config.CONTENT_SERVICE_URL
     resource = f"contents/{cid}"
     params = {}
-    content_update = ContentsUpdate(state="ACTIVE")
+    content_update = ContentsUpdate(state=States.ACTIVE)
     return Services.put(url, resource, params, content_update.to_json())

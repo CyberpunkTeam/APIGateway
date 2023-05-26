@@ -4,6 +4,7 @@ from fastapi import APIRouter, Header, HTTPException
 from app import config
 from app.models.project_states import ProjectStates
 from app.models.requests.projects.project_update import ProjectsUpdate
+from app.models.requests.states import States
 from app.models.requests.teams.position_states import PositionStates
 from app.models.requests.teams.team_position_update import TeamPositionUpdate
 from app.models.requests.teams.team_update import TeamUpdate
@@ -432,3 +433,23 @@ async def create_team_recommendations(pid: str):
         return list(map(lambda result_i: _get_team(result_i.get("tid")), result))
 
     return result
+
+
+@router.post("/teams/{tid}/blocked", tags=["teams"])
+async def block_team(tid: str):
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+
+    team_update = TeamUpdate(state=States.BLOCKED)
+    return Services.put(url, resource, params, team_update.to_json())
+
+
+@router.post("/teams/{tid}/blocked", tags=["teams"])
+async def unblock_team(tid: str):
+    url = config.TEAM_SERVICE_URL
+    resource = f"teams/{tid}"
+    params = {}
+
+    team_update = TeamUpdate(state=States.ACTIVE)
+    return Services.put(url, resource, params, team_update.to_json())

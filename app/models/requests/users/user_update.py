@@ -2,6 +2,7 @@ from typing import Optional, List
 from json import loads
 from pydantic import BaseModel
 
+from app.models.requests.states import States
 from app.models.requests.users.education import Education
 from app.models.requests.users.skills import Skills
 from app.models.requests.users.work_experience import WorkExperience
@@ -18,6 +19,7 @@ class UserUpdate(BaseModel):
     skills: Optional[Skills]
     idioms: Optional[List[str]]
     temporal_team: Optional[bool]
+    state: Optional[States]
 
     def to_json(self):
         return loads(self.json(exclude_defaults=True))
