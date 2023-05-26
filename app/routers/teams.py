@@ -445,7 +445,7 @@ async def block_team(tid: str):
     return Services.put(url, resource, params, team_update.to_json())
 
 
-@router.post("/teams/{tid}/blocked", tags=["teams"])
+@router.post("/teams/{tid}/unblocked", tags=["teams"])
 async def unblock_team(tid: str):
     url = config.TEAM_SERVICE_URL
     resource = f"teams/{tid}"

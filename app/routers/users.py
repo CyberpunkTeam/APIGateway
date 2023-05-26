@@ -137,7 +137,7 @@ async def add_blocked_user(user_id: str):
     return Services.put(url, resource, params, user_update.to_json())
 
 
-@router.post("/users/{user_id}/blocked", tags=["users"])
+@router.post("/users/{user_id}/unblocked", tags=["users"])
 async def add_unblocked_user(user_id: str):
     url = config.USER_SERVICE_URL
     resource = f"users/{user_id}"
