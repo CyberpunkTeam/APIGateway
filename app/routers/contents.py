@@ -144,7 +144,7 @@ async def block_content(cid: str):
         "notification_type": "CONTENT_BLOCKED",
         "resource": "CONTENTS",
         "resource_id": result.get("cid"),
-        "metadata": {"name": result.get("name")},
+        "metadata": {"name": result.get("title")},
     }
 
     url = config.NOTIFICATION_SERVICE_URL
@@ -170,7 +170,7 @@ async def unblock_content(cid: str):
         "notification_type": "CONTENT_UNBLOCKED",
         "resource": "CONTENTS",
         "resource_id": result.get("cid"),
-        "metadata": {"name": result.get("name")},
+        "metadata": {"name": result.get("title")},
     }
 
     url = config.NOTIFICATION_SERVICE_URL
