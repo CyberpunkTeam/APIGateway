@@ -9,3 +9,5 @@ __pycache__
 .DS_Store
 async_test.py
 credentials.json
+import_users_firebase.py
+save_file.json
