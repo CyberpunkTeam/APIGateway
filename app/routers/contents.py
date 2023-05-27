@@ -136,7 +136,24 @@ async def block_content(cid: str):
     resource = f"contents/{cid}"
     params = {}
     content_update = ContentsUpdate(state=States.BLOCKED)
-    return Services.put(url, resource, params, content_update.to_json())
+    result = Services.put(url, resource, params, content_update.to_json())
+
+    notification = {
+        "sender_id": "fmt-admin",
+        "receiver_id": result.get("author_uid"),
+        "notification_type": "CONTENT_BLOCKED",
+        "resource": "CONTENTS",
+        "resource_id": result.get("cid"),
+        "metadata": {"name": result.get("name")},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return result
 
 
 @router.post("/contents/{cid}/unblocked", tags=["contents"])
@@ -145,4 +162,21 @@ async def unblock_content(cid: str):
     resource = f"contents/{cid}"
     params = {}
     content_update = ContentsUpdate(state=States.ACTIVE)
-    return Services.put(url, resource, params, content_update.to_json())
+    result = Services.put(url, resource, params, content_update.to_json())
+
+    notification = {
+        "sender_id": "fmt-admin",
+        "receiver_id": result.get("author_uid"),
+        "notification_type": "CONTENT_UNBLOCKED",
+        "resource": "CONTENTS",
+        "resource_id": result.get("cid"),
+        "metadata": {"name": result.get("name")},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return result
