@@ -43,6 +43,7 @@ async def list_projects(
     frameworks: str = None,
     platforms: str = None,
     databases: str = None,
+    internal_state: InternalStates = None,
 ):
     url = config.PROJECT_SERVICE_URL
     resource = "projects/"
@@ -79,6 +80,9 @@ async def list_projects(
 
     if frameworks is not None:
         params["frameworks"] = frameworks
+
+    if internal_state is not None:
+        params["internal_state"] = internal_state
 
     projects = Services.get(url, resource, params)
 
