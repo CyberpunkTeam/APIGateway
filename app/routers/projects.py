@@ -351,6 +351,7 @@ async def block_project(pid: str):
     resource = f"projects/{pid}"
     params = {}
     project_update = ProjectsUpdate(state_internal=InternalStates.BLOCKED)
+    print(project_update.to_json())
     return Services.put(url, resource, params, project_update.to_json())
 
 
@@ -360,4 +361,5 @@ async def unblock_project(pid: str):
     resource = f"projects/{pid}"
     params = {}
     project_update = ProjectsUpdate(state_internal=InternalStates.ACTIVE)
+    print(project_update.to_json())
     return Services.put(url, resource, params, project_update.to_json())
