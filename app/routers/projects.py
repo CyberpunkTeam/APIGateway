@@ -12,6 +12,7 @@ from app.routers.recommendations import (
 )
 from app.services import Services
 from app.utils.authenticator import Authenticator
+from app.models.requests.states import States as InternalStates
 
 router = APIRouter()
 
@@ -345,7 +346,7 @@ async def block_project(pid: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
-    project_update = ProjectsUpdate(state=States.BLOCKED)
+    project_update = ProjectsUpdate(state=InternalStates.BLOCKED)
     return Services.put(url, resource, params, project_update.to_json())
 
 
@@ -354,5 +355,5 @@ async def unblock_project(pid: str):
     url = config.PROJECT_SERVICE_URL
     resource = f"projects/{pid}"
     params = {}
-    project_update = ProjectsUpdate(state=States.PENDING)
+    project_update = ProjectsUpdate(state=InternalStates.ACTIVE)
     return Services.put(url, resource, params, project_update.to_json())
