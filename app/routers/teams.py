@@ -442,7 +442,24 @@ async def block_team(tid: str):
     params = {}
 
     team_update = TeamUpdate(state=States.BLOCKED)
-    return Services.put(url, resource, params, team_update.to_json())
+    result = Services.put(url, resource, params, team_update.to_json())
+
+    notification = {
+        "sender_id": "fmt-admin",
+        "receiver_id": result.get("owner"),
+        "notification_type": "TEAM_BLOCKED",
+        "resource": "TEAMS",
+        "resource_id": result.get("tid"),
+        "metadata": {"name": result.get("name")},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return result
 
 
 @router.post("/teams/{tid}/unblocked", tags=["teams"])
@@ -452,4 +469,21 @@ async def unblock_team(tid: str):
     params = {}
 
     team_update = TeamUpdate(state=States.ACTIVE)
-    return Services.put(url, resource, params, team_update.to_json())
+    result = Services.put(url, resource, params, team_update.to_json())
+
+    notification = {
+        "sender_id": "fmt-admin",
+        "receiver_id": result.get("owner"),
+        "notification_type": "TEAM_UNBLOCKED",
+        "resource": "TEAMS",
+        "resource_id": result.get("tid"),
+        "metadata": {"name": result.get("name")},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return result

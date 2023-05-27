@@ -351,7 +351,24 @@ async def block_project(pid: str):
     resource = f"projects/{pid}"
     params = {}
     project_update = ProjectsUpdate(internal_state=InternalStates.BLOCKED)
-    return Services.put(url, resource, params, project_update.to_json())
+    result = Services.put(url, resource, params, project_update.to_json())
+
+    notification = {
+        "sender_id": "fmt-admin",
+        "receiver_id": result.get("creator_uid"),
+        "notification_type": "PROJECT_BLOCKED",
+        "resource": "PROJECTS",
+        "resource_id": result.get("pid"),
+        "metadata": {"name": result.get("name")},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return result
 
 
 @router.post("/projects/{pid}/unblocked", tags=["projects"], status_code=200)
@@ -360,4 +377,21 @@ async def unblock_project(pid: str):
     resource = f"projects/{pid}"
     params = {}
     project_update = ProjectsUpdate(internal_state=InternalStates.ACTIVE)
-    return Services.put(url, resource, params, project_update.to_json())
+    result = Services.put(url, resource, params, project_update.to_json())
+
+    notification = {
+        "sender_id": "fmt-admin",
+        "receiver_id": result.get("creator_uid"),
+        "notification_type": "PROJECT_UNBLOCKED",
+        "resource": "PROJECTS",
+        "resource_id": result.get("pid"),
+        "metadata": {"name": result.get("name")},
+    }
+
+    url = config.NOTIFICATION_SERVICE_URL
+    resource = "notifications/"
+    params = {}
+
+    Services.post(url, resource, params, notification)
+
+    return result
