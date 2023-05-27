@@ -9,6 +9,7 @@ from app.models.project_states import ProjectStates
 from app.models.requests.projects.description import Description
 from app.models.technologies import Technologies
 from app.models.unit_duration import UnitDuration
+from app.models.requests.states import States as InternalStates
 
 
 class ProjectsUpdate(BaseModel):
@@ -24,6 +25,7 @@ class ProjectsUpdate(BaseModel):
     tentative_duration: Optional[int]
     unit_duration: Optional[UnitDuration]
     project_type: Optional[str]
+    internal_state: Optional[InternalStates]
 
     def to_json(self):
         return loads(self.json(exclude_defaults=True))
