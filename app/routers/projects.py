@@ -352,7 +352,6 @@ async def block_project(pid: str):
     params = {}
     project_update = ProjectsUpdate(internal_state=InternalStates.BLOCKED)
     result = Services.put(url, resource, params, project_update.to_json())
-
     notification = {
         "sender_id": "fmt-admin",
         "receiver_id": result.get("creator_uid"),
@@ -362,11 +361,34 @@ async def block_project(pid: str):
         "metadata": {"name": result.get("name")},
     }
 
-    url = config.NOTIFICATION_SERVICE_URL
-    resource = "notifications/"
-    params = {}
+    tid = result.get("team_assigned")
+    if tid is not None:
+        url = config.TEAM_SERVICE_URL
+        resource = f"teams/{tid}"
+        params = {}
+        team = Services.get(url, resource, params)
 
-    Services.post(url, resource, params, notification)
+        team_notification = {
+            "sender_id": "fmt-admin",
+            "receiver_id": team.get("owner"),
+            "notification_type": "TEAM_PROJECT_BLOCKED",
+            "resource": "PROJECTS",
+            "resource_id": result.get("pid"),
+            "metadata": {"name": result.get("name")},
+        }
+        url = config.NOTIFICATION_SERVICE_URL
+        resource = "notifications/"
+        params = {}
+
+        r1 = Services.post(url, resource, params, notification, async_mode=True)
+        r2 = Services.post(url, resource, params, team_notification, async_mode=True)
+        Services.execute_many([r1, r2])
+    else:
+        url = config.NOTIFICATION_SERVICE_URL
+        resource = "notifications/"
+        params = {}
+
+        Services.post(url, resource, params, notification)
 
     return result
 
@@ -388,10 +410,33 @@ async def unblock_project(pid: str):
         "metadata": {"name": result.get("name")},
     }
 
-    url = config.NOTIFICATION_SERVICE_URL
-    resource = "notifications/"
-    params = {}
+    tid = result.get("team_assigned")
+    if tid is not None:
+        url = config.TEAM_SERVICE_URL
+        resource = f"teams/{tid}"
+        params = {}
+        team = Services.get(url, resource, params)
 
-    Services.post(url, resource, params, notification)
+        team_notification = {
+            "sender_id": "fmt-admin",
+            "receiver_id": team.get("owner"),
+            "notification_type": "TEAM_PROJECT_UNBLOCKED",
+            "resource": "PROJECTS",
+            "resource_id": result.get("pid"),
+            "metadata": {"name": result.get("name")},
+        }
+        url = config.NOTIFICATION_SERVICE_URL
+        resource = "notifications/"
+        params = {}
+
+        r1 = Services.post(url, resource, params, notification, async_mode=True)
+        r2 = Services.post(url, resource, params, team_notification, async_mode=True)
+        Services.execute_many([r1, r2])
+    else:
+        url = config.NOTIFICATION_SERVICE_URL
+        resource = "notifications/"
+        params = {}
+
+        Services.post(url, resource, params, notification)
 
     return result
