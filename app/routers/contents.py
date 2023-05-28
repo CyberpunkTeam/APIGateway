@@ -69,7 +69,7 @@ async def get_contents(author_uid: str = None, tid: str = None, state: States = 
 
 
 @router.get("/contents/{cid}", tags=["contents"], status_code=200)
-async def get_contents(cid: str = None):
+async def get_content(cid: str = None):
     url = config.CONTENT_SERVICE_URL
     resource = f"contents/{cid}"
     params = {}
