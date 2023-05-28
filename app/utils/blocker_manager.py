@@ -7,7 +7,7 @@ from app.services import Services
 
 class BlockerManager:
     def __init__(self):
-        self.blocked_users = []
+        self._update_blocked_user()
         self.last_update = datetime.now()
 
     def is_blocked_user(self, uid):
