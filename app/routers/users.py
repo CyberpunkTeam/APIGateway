@@ -19,10 +19,12 @@ async def create_user(body: dict):
 
 
 @router.get("/users/", tags=["users"])
-async def list_users():
+async def list_users(state: States = None):
     url = config.USER_SERVICE_URL
     resource = "users/"
     params = {}
+    if state is not None:
+        params["state"] = state
     return Services.get(url, resource, params)
 
 

@@ -17,7 +17,7 @@ async def create_content(body: dict):
 
 
 @router.get("/contents/", tags=["contents"], status_code=200)
-async def get_contents(author_uid: str = None, tid: str = None, state: str = None):
+async def get_contents(author_uid: str = None, tid: str = None, state: States = None):
     url = config.CONTENT_SERVICE_URL
     resource = "contents/"
     params = {}

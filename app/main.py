@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Security, Request
+from fastapi import FastAPI, Security, Request, HTTPException
 
 from .routers import (
     users,
@@ -18,8 +18,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .routers.authentication import authenticate
 from .utils.authenticator import Authenticator
+from .utils.blocker_manager import BlockerManager
 
 app = FastAPI()
+blocker_manager = BlockerManager()
 
 
 @app.middleware("http")
@@ -28,10 +30,15 @@ async def add_process_time_header(request: Request, call_next):
     auth_token = request.headers.get("X-Tiger-Token")
     if auth_token is not None and "Bearer" in auth_token:
         token = auth_token.replace("Bearer ", "")
-        if not (token in ("gonza", "mati")) and Authenticator.is_expired(token):
+        if not (token in ("gonza", "mati")):
             token_decoded = Authenticator.decode_token(token)
-            new_token = Authenticator.create_token(token_decoded.get("user_id"))
-            response.headers["Token-Refresh"] = new_token
+            user_id = token_decoded.get("user_id")
+            if blocker_manager.is_blocked_user(user_id):
+                raise HTTPException(status_code=403, detail="User is blocked")
+            if Authenticator.is_expired(token):
+                new_token = Authenticator.create_token(user_id)
+                response.headers["Token-Refresh"] = new_token
+
     return response
 
 
