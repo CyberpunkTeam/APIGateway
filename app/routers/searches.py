@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
 from app import config
-from app.main import blocker_manager
 from app.models.entity import Entity
 from app.services import Services
 
@@ -26,10 +25,6 @@ async def search(word: str):
     req_contents = Services.get(url, resource, params, async_mode=True)
 
     users, teams, contents = Services.execute_many([req_users, req_teams, req_contents])
-
-    users = [
-        user for user in users if not (user.get("uid") in blocker_manager.blocked_users)
-    ]
 
     result["teams"] = teams
     result["users"] = users
