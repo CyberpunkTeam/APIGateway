@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
 from app import config
-from app.main import blocker_manager
 from app.models.entity import Entity
 from app.services import Services
 
