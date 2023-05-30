@@ -15,9 +15,11 @@ async def get_home(uid: str):
     following = user["following"]
     uids = following["users"]
     users_dict = _get_users(uids)
+    uids = [uid for uid in uids if uid in users_dict]
 
     tids = following["teams"]
     teams_dict = _get_teams(tids)
+    tids = [tid for tid in tids if tid in teams_dict]
 
     users_contents = _get_content(uids=uids, dict_source=users_dict)
 
@@ -107,7 +109,7 @@ def _get_users(uids):
     else:
         users = []
 
-    return {user.get("uid"): user for user in users}
+    return {user.get("uid"): user for user in users if user.get("state") == "ACTIVE"}
 
 
 def _get_teams(tids):
@@ -120,7 +122,7 @@ def _get_teams(tids):
     else:
         teams = []
 
-    return {team.get("tid"): team for team in teams}
+    return {team.get("tid"): team for team in teams if team.get("state") == "ACTIVE"}
 
 
 def _get_content(uids=None, tids=None, dict_source=None):
@@ -147,6 +149,7 @@ def _get_content(uids=None, tids=None, dict_source=None):
     results_contents_by_users = [
         _create_home_content(content_type, content, dict_source)
         for content in content_result
+        if content.get("state") == "ACTIVE"
     ]
     return results_contents_by_users
 
@@ -172,6 +175,7 @@ def _get_new_projects(uids, user_dict):
     projects_result = [
         _create_home_content("new_project", project, user_dict)
         for project in projects_result
+        if project.get("internal_state") == "ACTIVE"
     ]
     return projects_result
 
@@ -195,6 +199,8 @@ def _get_new_teams(uids, user_dict):
         teams_result += team
 
     teams_result = [
-        _create_home_content("new_team", team, user_dict) for team in teams_result
+        _create_home_content("new_team", team, user_dict)
+        for team in teams_result
+        if team.get("state") == "ACTIVE"
     ]
     return teams_result
