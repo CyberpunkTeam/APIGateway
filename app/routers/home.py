@@ -16,6 +16,7 @@ async def get_home(uid: str):
     uids = following["users"]
     users_dict = _get_users(uids)
     uids = [uid for uid in uids if uid in users_dict]
+    print(f"users_dict: {users_dict}")
     print(f"uids: {uids}")
     tids = following["teams"]
     teams_dict = _get_teams(tids)
