@@ -21,10 +21,10 @@ class SessionsManager:
                     tracks.append(
                         Tracks(uid=uid, path="/session", created_date=timestamp)
                     )
-                print("tracks to save: ", len(tracks))
+
                 if len(tracks) > 0:
                     self.repository.save_many(tracks)
-                print("tracks saved")
+
                 self.users_loaded.update(self.new_sessions)
                 self.new_sessions = {}
 
@@ -38,3 +38,4 @@ class SessionsManager:
     def add_user(self, uid):
         if uid not in self.users_loaded:
             self.new_sessions[uid] = datetime.now().strftime("%d-%m-%Y:%H:%M:%S")
+        self.batch_load_session()
