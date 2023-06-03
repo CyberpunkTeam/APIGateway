@@ -21,10 +21,10 @@ class SessionsManager:
                     tracks.append(
                         Tracks(uid=uid, path="/session", created_date=timestamp)
                     )
-
+                print("tracks to save: ", len(tracks))
                 if len(tracks) > 0:
                     self.repository.save_many(tracks)
-
+                print("tracks saved")
                 self.users_loaded.update(self.new_sessions)
                 self.new_sessions = {}
 
