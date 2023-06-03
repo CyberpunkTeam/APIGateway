@@ -14,6 +14,7 @@ from .routers import (
     recommendations,
     contents,
     home,
+    metrics,
 )
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -65,4 +66,5 @@ app.include_router(invitations.router, dependencies=[Security(authenticate)])
 app.include_router(searches.router, dependencies=[Security(authenticate)])
 app.include_router(contents.router, dependencies=[Security(authenticate)])
 app.include_router(home.router, dependencies=[Security(authenticate)])
+app.include_router(metrics.router, dependencies=[Security(authenticate)])
 app.include_router(authentication.router)
