@@ -15,15 +15,17 @@ class SessionsManager:
         try:
             current_datetime = datetime.now()
             if (current_datetime - self.last_updated).seconds > 60:
+                print("entro a enviar las sessiones")
                 self.last_updated = current_datetime
                 tracks = []
                 for uid, timestamp in self.new_sessions.items():
                     tracks.append(
                         Tracks(uid=uid, path="/session", created_date=timestamp)
                     )
-
+                print("son en totol:", len(tracks))
                 if len(tracks) > 0:
-                    self.repository.save_many(tracks)
+                    ok = self.repository.save_many(tracks)
+                    print("se guardaron las sessiones: ", ok)
 
                 self.users_loaded.update(self.new_sessions)
                 self.new_sessions = {}
