@@ -24,7 +24,7 @@ class SessionsManager:
                     )
                 print("son en totol:", len(tracks))
                 if len(tracks) > 0:
-                    ok = self.repository.save_many(tracks)
+                    ok = self.repository.insert_many(tracks)
                     print("se guardaron las sessiones: ", ok)
 
                 self.users_loaded.update(self.new_sessions)
