@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Security, Request, HTTPException
 from starlette.responses import JSONResponse
 
+from . import config
 from .routers import (
     users,
     state,
@@ -21,9 +22,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers.authentication import authenticate
 from .utils.authenticator import Authenticator
 from .utils.blocker_manager import BlockerManager
+from .utils.sessions_manager import SessionsManager
+from .utils.tracks_repository import TracksRepository
 
 app = FastAPI()
 blocker_manager = BlockerManager()
+tracks_repository = TracksRepository(config.DATABASE_URL, config.DATABASE_NAME)
+sessions_manager = SessionsManager(tracks_repository)
 
 
 @app.middleware("http")
@@ -38,6 +43,9 @@ async def add_process_time_header(request: Request, call_next):
                 user_id = token_decoded.get("user_id")
                 if blocker_manager.is_blocked_user(user_id):
                     raise HTTPException(status_code=403, detail="User is blocked")
+
+                sessions_manager.add_user(user_id)
+
                 if Authenticator.is_expired(token):
                     new_token = Authenticator.create_token(user_id)
                     response.headers["Token-Refresh"] = new_token
