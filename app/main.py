@@ -46,7 +46,7 @@ async def add_process_time_header(request: Request, call_next):
                 if blocker_manager.is_blocked_user(user_id):
                     raise HTTPException(status_code=403, detail="User is blocked")
 
-                sessions_manager.add_user(user_id)
+                # sessions_manager.add_user(user_id)
 
                 if Authenticator.is_expired(token):
                     new_token = Authenticator.create_token(user_id)
