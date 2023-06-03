@@ -36,11 +36,13 @@ async def add_process_time_header(request: Request, call_next):
     try:
         response = await call_next(request)
         auth_token = request.headers.get("X-Tiger-Token")
+        print("auth_token: ", auth_token)
         if auth_token is not None and "Bearer" in auth_token:
             token = auth_token.replace("Bearer ", "")
             if not (token in ("gonza", "mati")):
                 token_decoded = Authenticator.decode_token(token)
                 user_id = token_decoded.get("user_id")
+                print("USERID: ", user_id)
                 if blocker_manager.is_blocked_user(user_id):
                     raise HTTPException(status_code=403, detail="User is blocked")
 
