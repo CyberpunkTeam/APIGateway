@@ -23,7 +23,7 @@ class SessionsManager:
                     )
 
                 if len(tracks) > 0:
-                    self.repository.save_many(self.new_sessions.keys())
+                    self.repository.save_many(tracks)
 
                 self.users_loaded.update(self.new_sessions)
                 self.new_sessions = {}
@@ -33,7 +33,7 @@ class SessionsManager:
                 self.users_loaded = {}
                 self.date = current_date
         except Exception as e:
-            print("error: ", e)
+            print("tracking error: ", e)
 
     def add_user(self, uid):
         if uid not in self.users_loaded:
