@@ -39,7 +39,7 @@ async def get_metrics(days: int = -1):
         teams["teams_created"] = {"labels": labels, "values": values}
 
         input_labels = users.get("users_created").get("labels")
-        input_values = teams.get("users_created").get("values")
+        input_values = users.get("users_created").get("values")
         labels, values = filter_dates(input_labels, input_values, min_date)
 
         users["users_created"] = {"labels": labels, "values": values}
