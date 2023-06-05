@@ -1,13 +1,14 @@
 from datetime import datetime
 
-from app.utils.tracks import Tracks
+from app import config
+from app.models.requests.metrics import Tracks
+from app.services import Services
 
 
 class SessionsManager:
-    def __init__(self, repository):
+    def __init__(self):
         self.users_loaded = {}
         self.new_sessions = {}
-        self.repository = repository
         self.date = datetime.now().strftime("%d-%m-%Y")
         self.last_updated = datetime.now()
 
@@ -15,17 +16,21 @@ class SessionsManager:
         try:
             current_datetime = datetime.now()
             if (current_datetime - self.last_updated).seconds > 60:
-                print("entro a enviar las sessiones")
+
                 self.last_updated = current_datetime
                 tracks = []
                 for uid, timestamp in self.new_sessions.items():
                     tracks.append(
-                        Tracks(uid=uid, path="/session", created_date=timestamp)
+                        Tracks(
+                            uid=uid, path="/session", created_date=timestamp
+                        ).to_json()
                     )
-                print("son en totol:", len(tracks))
+
                 if len(tracks) > 0:
-                    ok = self.repository.insert_many(tracks)
-                    print("se guardaron las sessiones: ", ok)
+                    url = config.METRIC_SERVICE_URL
+                    resource = "tracks/"
+                    params = {}
+                    Services.post(url, resource, params, tracks)
 
                 self.users_loaded.update(self.new_sessions)
                 self.new_sessions = {}
@@ -39,5 +44,5 @@ class SessionsManager:
 
     def add_user(self, uid):
         if uid not in self.users_loaded:
-            self.new_sessions[uid] = datetime.now().strftime("%d-%m-%Y:%H:%M:%S")
+            self.new_sessions[uid] = datetime.now().strftime("%d-%m-%Y")
         self.batch_load_session()
