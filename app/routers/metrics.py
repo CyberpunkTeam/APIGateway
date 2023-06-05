@@ -1,11 +1,21 @@
 from datetime import datetime, timedelta
+from typing import List
 
 from fastapi import APIRouter
 
 from app import config
+from app.models.requests.metrics import Tracks
 from app.services import Services
 
 router = APIRouter()
+
+
+@router.post("/tracks/", tags=["metrics"], status_code=201)
+async def create_tracks(body: List[Tracks]):
+    url = config.METRIC_SERVICE_URL
+    resource = "tracks/"
+    params = {}
+    return Services.post(url, resource, params, body)
 
 
 @router.get("/metrics", tags=["metrics"])
@@ -15,15 +25,14 @@ async def get_metrics(days: int = -1):
     url_users = config.USER_SERVICE_URL
     url_metrics = config.METRIC_SERVICE_URL
     resource = "metrics"
-    resource_metrics = "tracks"
     params = {}
 
     projects_req = Services.get(url_projects, resource, params, async_mode=True)
     teams_req = Services.get(url_teams, resource, params, async_mode=True)
     users_req = Services.get(url_users, resource, params, async_mode=True)
-    metrics_req = Services.get(url_metrics, resource_metrics, params, async_mode=True)
+    metrics_req = Services.get(url_metrics, resource, params, async_mode=True)
 
-    projects, teams, users, tracks = Services.execute_many(
+    projects, teams, users, sessions = Services.execute_many(
         [projects_req, teams_req, users_req, metrics_req]
     )
 
@@ -49,7 +58,12 @@ async def get_metrics(days: int = -1):
 
         users["users_created"] = {"labels": labels, "values": values}
 
-    result = {"projects": projects, "teams": teams, "users": users, "tracks": tracks}
+    result = {
+        "projects": projects,
+        "teams": teams,
+        "users": users,
+        "sessions": sessions,
+    }
 
     return result
 
