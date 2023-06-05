@@ -15,6 +15,7 @@ async def create_tracks(body: List[Tracks]):
     url = config.METRIC_SERVICE_URL
     resource = "tracks/"
     params = {}
+    body = [track.to_json() for track in body]
     return Services.post(url, resource, params, body)
 
 

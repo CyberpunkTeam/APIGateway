@@ -23,12 +23,12 @@ from .routers.authentication import authenticate
 from .utils.authenticator import Authenticator
 from .utils.blocker_manager import BlockerManager
 from .utils.sessions_manager import SessionsManager
-from .utils.tracks_repository import TracksRepository
+
 
 app = FastAPI()
 blocker_manager = BlockerManager()
-tracks_repository = TracksRepository(config.DATABASE_URL, config.DATABASE_NAME)
-sessions_manager = SessionsManager(tracks_repository)
+
+sessions_manager = SessionsManager()
 
 
 @app.middleware("http")
@@ -46,7 +46,7 @@ async def add_process_time_header(request: Request, call_next):
                 if blocker_manager.is_blocked_user(user_id):
                     raise HTTPException(status_code=403, detail="User is blocked")
 
-                # sessions_manager.add_user(user_id)
+                sessions_manager.add_user(user_id)
 
                 if Authenticator.is_expired(token):
                     new_token = Authenticator.create_token(user_id)
