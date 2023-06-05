@@ -9,7 +9,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   REGION: us-central1
-  SERVICE: apigateway
+  SERVICE: metrics-internal
 
 
 jobs:
