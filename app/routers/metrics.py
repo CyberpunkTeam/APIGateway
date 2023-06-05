@@ -13,14 +13,19 @@ async def get_metrics(days: int = -1):
     url_projects = config.PROJECT_SERVICE_URL
     url_teams = config.TEAM_SERVICE_URL
     url_users = config.USER_SERVICE_URL
+    url_metrics = config.METRIC_SERVICE_URL
     resource = "metrics"
+    resource_metrics = "tracks"
     params = {}
 
     projects_req = Services.get(url_projects, resource, params, async_mode=True)
     teams_req = Services.get(url_teams, resource, params, async_mode=True)
     users_req = Services.get(url_users, resource, params, async_mode=True)
+    metrics_req = Services.get(url_metrics, resource_metrics, params, async_mode=True)
 
-    projects, teams, users = Services.execute_many([projects_req, teams_req, users_req])
+    projects, teams, users, tracks = Services.execute_many(
+        [projects_req, teams_req, users_req, metrics_req]
+    )
 
     if days != -1:
 
@@ -44,7 +49,7 @@ async def get_metrics(days: int = -1):
 
         users["users_created"] = {"labels": labels, "values": values}
 
-    result = {"projects": projects, "teams": teams, "users": users}
+    result = {"projects": projects, "teams": teams, "users": users, "tracks": tracks}
 
     return result
 
