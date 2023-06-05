@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get("/metrics", tags=["metrics"])
-async def get_metrics(days: int = 7):
+async def get_metrics(days: int = -1):
     url_projects = config.PROJECT_SERVICE_URL
     url_teams = config.TEAM_SERVICE_URL
     url_users = config.USER_SERVICE_URL
@@ -22,18 +22,27 @@ async def get_metrics(days: int = 7):
 
     projects, teams, users = Services.execute_many([projects_req, teams_req, users_req])
 
-    min_date = (datetime.now() - timedelta(days)).strftime("%Y-%m-%d")
+    if days != -1:
 
-    labels = []
-    values = []
-    input_labels = projects.get("projects_created").get("labels")
-    for i in range(len(input_labels)):
-        date = input_labels[i]
-        if _get_date_to_compare(date) >= min_date:
-            labels.append(date)
-            values.append(projects.get("projects_created").get("values")[i])
+        min_date = (datetime.now() - timedelta(days)).strftime("%Y-%m-%d")
 
-    projects["projects_created"] = {"labels": labels, "values": values}
+        input_labels = projects.get("projects_created").get("labels")
+        input_values = projects.get("projects_created").get("values")
+        labels, values = filter_dates(input_labels, input_values, min_date)
+
+        projects["projects_created"] = {"labels": labels, "values": values}
+
+        input_labels = teams.get("teams_created").get("labels")
+        input_values = teams.get("teams_created").get("values")
+        labels, values = filter_dates(input_labels, input_values, min_date)
+
+        teams["teams_created"] = {"labels": labels, "values": values}
+
+        input_labels = users.get("users_created").get("labels")
+        input_values = teams.get("users_created").get("values")
+        labels, values = filter_dates(input_labels, input_values, min_date)
+
+        users["users_created"] = {"labels": labels, "values": values}
 
     result = {"projects": projects, "teams": teams, "users": users}
 
@@ -46,3 +55,14 @@ def _get_date_to_compare(date):
     month = date_list[1]
     year = date_list[2]
     return f"{year}-{month}-{day}"
+
+
+def filter_dates(labels, values, min_date):
+    new_labels = []
+    new_values = []
+    for i in range(len(labels)):
+        date = labels[i]
+        if _get_date_to_compare(date) >= min_date:
+            new_labels.append(date)
+            new_values.append(values[i])
+    return new_labels, new_values
