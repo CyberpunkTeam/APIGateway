@@ -19,6 +19,18 @@ async def create_tracks(body: List[Tracks]):
     return Services.post(url, resource, params, body)
 
 
+@router.get("/tracks/", tags=["metrics"])
+async def create_tracks(path: str = None):
+    url = config.METRIC_SERVICE_URL
+    resource = "tracks/"
+    params = {}
+
+    if path:
+        params["path"] = path
+
+    return Services.get(url, resource, params)
+
+
 @router.get("/metrics", tags=["metrics"])
 async def get_metrics(days: int = -1):
     url_projects = config.PROJECT_SERVICE_URL
@@ -58,6 +70,12 @@ async def get_metrics(days: int = -1):
         labels, values = filter_dates(input_labels, input_values, min_date)
 
         users["users_created"] = {"labels": labels, "values": values}
+
+        input_labels = sessions.get("session_created").get("labels")
+        input_values = sessions.get("session_created").get("values")
+        labels, values = filter_dates(input_labels, input_values, min_date)
+
+        sessions["session_created"] = {"labels": labels, "values": values}
 
     result = {
         "projects": projects,
