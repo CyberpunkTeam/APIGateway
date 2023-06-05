@@ -11,6 +11,7 @@ RECOMMENDATION_SERVICE_URL = os.environ.get(
     "RECOMMENDATION_SERVICE_URL", "http://test.com/"
 )
 CONTENT_SERVICE_URL = os.environ.get("CONTENT_SERVICE_URL", "http://test.com/")
+METRIC_SERVICE_URL = os.environ.get("METRIC_SERVICE_URL", "http://test.com/")
 
 
 DATABASE_USER = os.environ.get("DATABASE_USER")
