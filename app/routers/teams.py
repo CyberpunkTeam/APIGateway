@@ -302,7 +302,11 @@ async def list_team_position(
             position_i = dict(position)
             del position_i["candidates"]
             uids_i = Services.post(url, resource, params, position_i)
+
+            members = position.get("team", {}).get("members", [])
+            uids_i = [uid for uid in uids_i if not (uid in members)]
             uids.append(uids_i)
+
         # uids = Services.execute_many(reqs)
         for i in range(len(positions)):
             position_i = positions[i]
